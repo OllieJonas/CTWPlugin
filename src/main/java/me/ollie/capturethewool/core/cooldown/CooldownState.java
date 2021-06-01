@@ -1,17 +1,8 @@
 package me.ollie.capturethewool.core.cooldown;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Objects;
 
-@Getter
-@AllArgsConstructor(staticName = "of")
-public class CooldownState {
-
-    private final ReducedItemStack label;
-
-    private final long startTime;
+public record CooldownState(ReducedItemStack label, long startTime) {
 
     @Override
     public boolean equals(Object o) {

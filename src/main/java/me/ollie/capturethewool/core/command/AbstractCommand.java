@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 @Getter
-public abstract class AbstractCommand {
+public abstract sealed class AbstractCommand permits RootCommand, SubCommand {
 
     protected String name;
 

@@ -16,8 +16,11 @@ import me.ollie.capturethewool.items.types.PowerfulSword;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PowerfulItemRegistry {
+
+    private static final Random RANDOM = new Random();
 
     private static final Map<String, PowerfulSword> swords = new HashMap<>();
 
@@ -26,7 +29,7 @@ public class PowerfulItemRegistry {
     private static final Map<String, PowerfulBow> bows = new HashMap<>();
 
     @Getter
-    private static final Set<PowerfulItem> exotics = new HashSet<>();
+    private static final Map<ItemRarity, List<PowerfulItem>> rarities = new HashMap<>();
 
     static {
 
@@ -53,22 +56,44 @@ public class PowerfulItemRegistry {
 
     private static void registerBow(PowerfulBow bow) {
         bows.put(bow.getName(), bow);
-        registerExotic(bow);
+        registerRarity(bow);
     }
 
     private static void registerSword(PowerfulSword sword) {
         swords.put(sword.getName(), sword);
-        registerExotic(sword);
+        registerRarity(sword);
     }
 
     private static void registerItem(PowerfulItem item) {
         items.put(item.getName(), item);
-        registerExotic(item);
+        registerRarity(item);
     }
 
-    private static void registerExotic(PowerfulItem item) {
-        if (item.getRarity() == ItemRarity.EXOTIC)
-            exotics.add(item);
+    private static void registerRarity(PowerfulItem item) {
+        rarities.computeIfAbsent(item.getRarity(), k -> new ArrayList<>());
+        rarities.get(item.getRarity()).add(item);
+    }
+
+    public static PowerfulItem randomItemFrom(ItemRarity... rarities) {
+        return randomItemFrom(List.of(rarities));
+    }
+
+    public static PowerfulItem randomItem() {
+        return randomItemFrom(ItemRarity.values());
+    }
+
+    public static PowerfulItem randomItemFrom(List<ItemRarity> rarities) {
+        List<PowerfulItem> list = rarities.stream().map(PowerfulItemRegistry.rarities::get).flatMap(Collection::stream).collect(Collectors.toList());
+        return list.get(RANDOM.nextInt(list.size()));
+    }
+
+    public static PowerfulItem randomItemFrom(ItemRarity rarity) {
+        List<PowerfulItem> list = rarities.get(rarity);
+        return list.get(RANDOM.nextInt(list.size()));
+    }
+
+    public static List<PowerfulItem> getItemsFor(ItemRarity rarity) {
+        return rarities.get(rarity);
     }
 
     public static PowerfulItem get(String name) {
@@ -86,12 +111,5 @@ public class PowerfulItemRegistry {
 
     private static void register(Map<String, ? extends PowerfulItem> items) {
         items.values().forEach(PowerfulItemCooldownInjector::inject);
-    }
-
-    public static boolean doesPlayerAlreadyHaveExotic(Player player) {
-        return Arrays.stream(player.getInventory().getContents())
-                .anyMatch(i -> exotics.stream()
-                        .map(PowerfulItem::getItemStack)
-                        .anyMatch(e -> e.getItemMeta().getDisplayName().equals(i.getItemMeta().getDisplayName())));
     }
 }

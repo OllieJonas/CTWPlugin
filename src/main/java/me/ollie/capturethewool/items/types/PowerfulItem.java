@@ -32,7 +32,7 @@ public abstract class PowerfulItem implements Comparable<PowerfulItem> {
         this.name = name;
         this.rarity = rarity;
         this.abilityInformation = information;
-        this.context = ItemCooldownContext.of(name, information.getCooldownDuration(), cooldownType(), true);
+        this.context = new ItemCooldownContext(name, information.getCooldownDuration(), cooldownType(), true);
 
         this.itemStack = ItemsUtil.buildFrom(name, material, backstory, rarity,
                 abilityInformation.getTitle(),

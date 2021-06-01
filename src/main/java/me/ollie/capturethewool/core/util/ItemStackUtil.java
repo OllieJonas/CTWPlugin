@@ -1,6 +1,9 @@
 package me.ollie.capturethewool.core.util;
 
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -25,5 +28,20 @@ public class ItemStackUtil {
         meta.setLore(Collections.emptyList());
         item.setItemMeta(meta);
         return item;
+    }
+
+    public String getName(ItemStack item) {
+        String name;
+        return (name = item.getItemMeta().getDisplayName()).equals("") ? getName(item.getType()) : name;
+    }
+
+    public String getName(Material material) {
+        return ChatColor.GRAY + WordUtils.capitalizeFully(material.toString().replace("_", " "));
+    }
+
+    public String getNameAndAmount(ItemStack item) {
+        int amount;
+        String name = getName(item);
+        return (amount = item.getAmount()) != 1 ? name + ChatColor.YELLOW + " x" + amount : name;
     }
 }

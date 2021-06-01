@@ -1,17 +1,23 @@
 package me.ollie.capturethewool;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
 import me.ollie.capturethewool.commands.CaptureTheWoolCommand;
 import me.ollie.capturethewool.core.GamesCore;
+import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
+import me.ollie.capturethewool.core.hologram.DroppedItemHologramBuilder;
 import me.ollie.capturethewool.core.hologram.PaginatedHologram;
 import me.ollie.capturethewool.core.hologram.PaginatedHologramBuilder;
 import me.ollie.capturethewool.core.pve.DisableSpawners;
-import me.ollie.capturethewool.core.hologram.HologramBuilder;
+import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
+import me.ollie.capturethewool.core.npc.InteractableVillager;
 import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
 import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
 import me.ollie.capturethewool.items.swords.AssassinsBlade;
 import org.bukkit.*;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -21,12 +27,19 @@ public class CaptureTheWool extends JavaPlugin {
     @Getter
     private static CaptureTheWool instance;
 
+    private ProtocolManager protocolManager;
+
     @Getter
     private GamesCore gamesCore;
 
     @Override
+    public void onLoad() {
+        this.protocolManager = ProtocolLibrary.getProtocolManager();
+
+    }
+    @Override
     public void onEnable() {
-        this.gamesCore = new GamesCore(this);
+        this.gamesCore = new GamesCore(this, protocolManager);
 
         this.gamesCore.getHolographicDamageListener().toggle();
 
@@ -57,6 +70,15 @@ public class CaptureTheWool extends JavaPlugin {
                 .build();
 
         paginatedHologram.init();
+
+        InteractableVillager rightVillager = new InteractableVillager(this, new Location(Bukkit.getWorld("world"), 467.5, 4, 60.5), Villager.Profession.NONE, ChatColor.AQUA + "Capture the Wool", ChatColor.YELLOW + "" + ChatColor.BOLD + "RIGHT CLICK", p -> p.sendMessage("hi"));
+        InteractableVillager leftVillager = new InteractableVillager(this, new Location(Bukkit.getWorld("world"), 479.5, 4, 60.5), Villager.Profession.NONE, ChatColor.AQUA + "Capture the Wool", ChatColor.YELLOW + "" + ChatColor.BOLD + "RIGHT CLICK", p -> p.sendMessage("hi"));
+
+        DroppedItemHologram hologram = DroppedItemHologramBuilder.create(this, new Location(Bukkit.getWorld("world"), 473.5, 11, 92.5))
+                .item(new ItemStack(Material.DIRT).asQuantity(3))
+                .audience(Bukkit.getOnlinePlayers())
+                .onPickup((p, i) -> p.sendMessage("hi!!"))
+                .build();
         // elevator
         ActionOnEnterVortex actionOnEnterVortex = new ActionOnEnterVortex(this,
                 Particle.PORTAL,
@@ -89,6 +111,6 @@ public class CaptureTheWool extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        InteractableVillager.destroyAll();
     }
 }

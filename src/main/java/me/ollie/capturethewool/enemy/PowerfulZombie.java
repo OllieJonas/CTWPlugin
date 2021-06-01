@@ -12,11 +12,12 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class PowerfulZombie extends Enemy<Zombie> {
 
     public PowerfulZombie() {
-        super(Zombie.class, ChatColor.RED + "Powerful Zombie", NORMAL_DROPS, Arrays.asList(
+        super(Zombie.class, ChatColor.RED + "Powerful Zombie", DropsRegistry.IRON_DROPS, List.of(
                 modifier(Attribute.GENERIC_MAX_HEALTH, AttributeModifier.Operation.MULTIPLY_SCALAR_1, 0.5),
                 modifier(Attribute.GENERIC_MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_SCALAR_1, 0.1),
                 modifier(Attribute.GENERIC_ATTACK_DAMAGE, AttributeModifier.Operation.MULTIPLY_SCALAR_1, 0.1)));

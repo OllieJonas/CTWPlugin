@@ -2,9 +2,11 @@ name: CTW
 version: ${project.version}
 main: me.ollie.capturethewool.CaptureTheWool
 api-version: 1.16
-authors: [Ollie]
+authors:
+  - Ollie
 depend:
   - HolographicDisplays
+  - ProtocolLib
 description: Capture the Wool from Bleb.io
 commands:
   ctw:

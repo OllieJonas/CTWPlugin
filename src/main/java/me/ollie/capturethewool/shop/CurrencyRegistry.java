@@ -21,7 +21,7 @@ public class CurrencyRegistry {
                     .build());
 
     private static final String IRON_CURRENCY_NAME = "Iron Bucks";
-    private static final String IRON_CURRENCY_FORMATTED_NAME = ChatColor.GRAY + "" + ChatColor.BOLD + EXOTIC_CURRENCY_NAME;
+    private static final String IRON_CURRENCY_FORMATTED_NAME = ChatColor.WHITE + "" + ChatColor.BOLD + IRON_CURRENCY_NAME;
     public static final Currency IRON_BUCKS = new Currency(
             IRON_CURRENCY_NAME,
             IRON_CURRENCY_FORMATTED_NAME,

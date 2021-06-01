@@ -35,7 +35,7 @@ public class Price {
         if (!hasRequirements(player)) return false;
 
         ItemStack[] itemsToRemove = currencyAmounts.entrySet().stream()
-                .map(c -> c.getKey().getItemRepresentation().asQuantity(c.getValue()))
+                .map(c -> c.getKey().itemRepresentation().asQuantity(c.getValue()))
                 .toArray(ItemStack[]::new);
 
         player.getInventory().removeItem(itemsToRemove);
@@ -66,7 +66,7 @@ public class Price {
         for (int i = 0; i < requirementStatistics.size(); i++) {
             Map.Entry<Currency, Integer> currency = currencies.get(i);
             Requirement requirement = requirementStatistics.get(i);
-            String toAdd = ChatColor.DARK_GRAY + " - " + currency.getKey().getFormattedName() + " " + requirement.getLore();
+            String toAdd = ChatColor.DARK_GRAY + " - " + currency.getKey().formattedName() + " " + requirement.getLore();
             lore.add(toAdd);
         }
         lore.add(" ");
@@ -76,17 +76,14 @@ public class Price {
 
     public List<Requirement> requirementStatistics(Player player) {
         return currencyAmounts.entrySet().stream()
-                .map(e -> Requirement.of(Arrays.stream(player.getInventory().getContents())
-                        .filter(i -> ItemStackUtil.weakEquals(i, e.getKey().getItemRepresentation()))
+                .map(e -> new Requirement(Arrays.stream(player.getInventory().getContents())
+                        .filter(i -> ItemStackUtil.weakEquals(i, e.getKey().itemRepresentation()))
+                        .filter(Objects::nonNull)
                         .mapToInt(ItemStack::getAmount).sum(), e.getValue()))
                 .collect(Collectors.toList());
     }
 
-    @Getter
-    @AllArgsConstructor(staticName = "of")
-    private static class Requirement {
-        int amountHave;
-        int amountRequired;
+    private record Requirement(int amountHave, int amountRequired) {
 
         public boolean hasEnough() {
             return amountHave >= amountRequired;

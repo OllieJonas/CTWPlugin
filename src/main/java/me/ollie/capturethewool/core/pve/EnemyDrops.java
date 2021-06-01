@@ -1,38 +1,41 @@
 package me.ollie.capturethewool.core.pve;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
+import me.ollie.capturethewool.core.util.ItemStackUtil;
+import me.ollie.capturethewool.core.util.ListUtil;
+import me.ollie.capturethewool.items.ItemRarity;
+import me.ollie.capturethewool.items.PowerfulItemRegistry;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class EnemyDrops {
+public record EnemyDrops(Set<ChanceDrop> drops) {
 
     private static final Random RANDOM = new Random();
 
-    // supplier to allow for random common / uncommon / rare drops.
-    @Getter
-    private final Map<Float, Drop> drops;
+    private static final JavaPlugin PLUGIN = CaptureTheWool.getInstance();
 
-    private EnemyDrops(Map<Float, Drop> drops) {
-        this.drops = drops;
+    public List<DroppedItemHologram> drop(Entity entity) {
+        return drop(entity, entity.getLocation().getNearbyPlayers(32));
     }
 
-    public EnemyDrops addAll(EnemyDrops drops) {
-        this.drops.putAll(drops.getDrops());
-        return this;
-    }
-
-    public List<ItemStack> randomDrops() {
-        return drops.entrySet().stream()
-                .filter(e -> RANDOM.nextFloat() <= e.getKey())
-                .map(e -> e.getValue().getItem())
+    public List<DroppedItemHologram> drop(Entity entity, Collection<? extends Player> audience) {
+        return drops.stream()
+                .filter(e -> passes(e.chance()))
+                .map(ChanceDrop::drop)
+                .map(e -> e.asHologram(entity, audience))
                 .collect(Collectors.toList());
+    }
+
+    private boolean passes(float f) {
+        return RANDOM.nextFloat() <= f;
     }
 
     public static Builder builder() {
@@ -40,35 +43,29 @@ public class EnemyDrops {
     }
 
     public static class Builder {
-        private final Map<Float, Drop> drops;
 
-        public Builder() {
-            this.drops = new HashMap<>();
+        private final Set<ChanceDrop> drops;
+
+        private Builder() {
+            this.drops = new HashSet<>();
         }
 
-        public Builder drop(Float chance, ItemStack item) {
-            drops.put(chance, Drop.of(item));
+        public Builder drop(float chance, Drop drop) {
+            return drop(new ChanceDrop(chance, drop));
+        }
+
+        public Builder drop(ChanceDrop drop) {
+            drops.add(drop);
             return this;
         }
 
-        public Builder drop(Float chance, Supplier<ItemStack> item) {
-            drops.put(chance, Drop.of(item, 1));
+        public Builder drops(Set<ChanceDrop> d) {
+            drops.addAll(d);
             return this;
         }
 
-        public Builder drop(Float chance, Supplier<ItemStack> item, int randomQuantity) {
-            drops.put(chance, Drop.of(item, randomQuantity));
-            return this;
-        }
-
-        public Builder drop(Float chance, Drop drop) {
-            drops.put(chance, drop);
-            return this;
-        }
-
-        public Builder drop(Float chance, ItemStack drop, int randomQuantity) {
-            drops.put(chance, Drop.of(() -> drop, randomQuantity));
-            return this;
+        public Builder drops(EnemyDrops drops) {
+            return drops(drops.drops());
         }
 
         public EnemyDrops build() {
@@ -76,19 +73,66 @@ public class EnemyDrops {
         }
     }
 
-    @AllArgsConstructor(staticName = "of")
-    public static class Drop {
+    public record ChanceDrop(float chance, Drop drop) {}
 
-        private final Supplier<ItemStack> itemStack;
+    sealed interface Drop permits Normal, Special, Unique {
+        DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience);
 
-        private final int randomQuantity;
+        ItemStack asItem();
+    }
 
-        public static Drop of(ItemStack item) {
-            return Drop.of(() -> item, 1);
+    public final record Normal(ItemStack item, int randomAmount) implements Drop {
+
+        @Override
+        public DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience) {
+            return DroppedItemHologram.entityDrop(PLUGIN, entity, item.asQuantity(1 + RANDOM.nextInt(randomAmount)), audience);
         }
 
-        public ItemStack getItem() {
-            return itemStack.get().asQuantity(RANDOM.nextInt(randomQuantity) + 1);
+        @Override
+        public ItemStack asItem() {
+            return item;
+        }
+    }
+
+    public final record Special(Supplier<ItemStack> item, DroppedItemHologram.OnPickup onPickup) implements Drop {
+
+        public static Special of(Supplier<ItemStack> item) {
+            return new Special(item, DroppedItemHologram.OnPickup.IDENTITY);
+        }
+
+        @Override
+        public DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience) {
+            return DroppedItemHologram.specialDrop(PLUGIN, entity, item.get(), audience, onPickup);
+        }
+
+        @Override
+        public ItemStack asItem() {
+            return item.get();
+        }
+    }
+
+    public final record Unique(Supplier<ItemStack> item, DroppedItemHologram.OnPickup onPickup, DroppedItemHologram.OnDrop onDrop) implements Drop {
+
+        public static Unique of(Supplier<ItemStack> item) {
+            return new Unique(item, DroppedItemHologram.OnPickup.IDENTITY, DroppedItemHologram.OnDrop.IDENTITY);
+        }
+
+        public static Unique of(Supplier<ItemStack> item, DroppedItemHologram.OnPickup onPickup) {
+            return new Unique(item, onPickup, DroppedItemHologram.OnDrop.IDENTITY);
+        }
+
+        public static Unique of(Supplier<ItemStack> item, DroppedItemHologram.OnDrop onDrop) {
+            return new Unique(item, DroppedItemHologram.OnPickup.IDENTITY, onDrop);
+        }
+
+        @Override
+        public DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> potentialRecipients) {
+            return DroppedItemHologram.uniqueDrop(PLUGIN, entity, item.get(), ListUtil.random(potentialRecipients), onPickup, onDrop);
+        }
+
+        @Override
+        public ItemStack asItem() {
+            return item.get();
         }
     }
 }

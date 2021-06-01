@@ -1,4 +1,4 @@
-package me.ollie.capturethewool.core.hologram;
+package me.ollie.capturethewool.core.hologram.meta;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -9,17 +9,17 @@ import me.ollie.capturethewool.core.util.control.Either;
 import me.ollie.capturethewool.core.util.control.OptionalPair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HologramBuilder {
+
+    public static final Location IDENTITY_LOCATION = new Location(Bukkit.getWorld("world"), 0, 0, 0);
 
     @FunctionalInterface
     public interface OnTouch {
@@ -37,6 +37,12 @@ public class HologramBuilder {
 
     private final Map<Either<String, ItemStack>, OptionalPair<OnTouch, OnPickup>> lines;
 
+    private final Set<Player> visibleToPlayers;
+
+    private final Set<Player> hiddenFromPlayers;
+
+    private boolean isVisibleByDefault = true;
+
     private OnTouch onTouchDefault;
 
     private OnPickup onPickupDefault;
@@ -45,10 +51,28 @@ public class HologramBuilder {
 
     private OnPickup onPickupOverride;
 
+
     public HologramBuilder(JavaPlugin plugin, Location location) {
         this.plugin = plugin;
         this.location = location;
         this.lines = new LinkedHashMap<>();
+        this.visibleToPlayers = new HashSet<>();
+        this.hiddenFromPlayers = new HashSet<>();
+    }
+
+    public HologramBuilder isVisibleByDefault(boolean isVisibleByDefault) {
+        this.isVisibleByDefault = isVisibleByDefault;
+        return this;
+    }
+
+    public HologramBuilder visibleTo(Collection<? extends Player> players) {
+        this.visibleToPlayers.addAll(players);
+        return this;
+    }
+
+    public HologramBuilder hiddenFrom(Collection<? extends Player> players) {
+        this.hiddenFromPlayers.addAll(players);
+        return this;
     }
 
     // ---------- OVERRIDE ON TOUCH ----------
@@ -78,6 +102,12 @@ public class HologramBuilder {
     // ---------- LINE NO TOUCH ----------
     public HologramBuilder line(String line) {
         lines.put(Either.left(line), OptionalPair.empty());
+        return this;
+    }
+
+    public HologramBuilder line(boolean condition, String line) {
+        if (condition)
+            line(line);
         return this;
     }
 
@@ -191,6 +221,10 @@ public class HologramBuilder {
 
     public Hologram build() {
         Hologram hologram = HologramsAPI.createHologram(plugin, location);
+        hologram.getVisibilityManager().setVisibleByDefault(isVisibleByDefault);
+        visibleToPlayers.forEach(p -> hologram.getVisibilityManager().showTo(p));
+        hiddenFromPlayers.forEach(p -> hologram.getVisibilityManager().hideTo(p));
+
         lines.forEach((k, v) ->
                 k.apply(left -> {
                     TextLine line = hologram.appendTextLine(left);

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public abstract class SubCommand extends AbstractCommand {
+public abstract non-sealed class SubCommand extends AbstractCommand {
 
     public SubCommand(String name) {
         this(name, "", false, Collections.emptyList());

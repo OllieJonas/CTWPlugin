@@ -58,23 +58,23 @@ public class CooldownManager {
 
         if (typeListMap == null) return false;
 
-        List<CooldownState> sts = typeListMap.get(context.getType());
+        List<CooldownState> sts = typeListMap.get(context.type());
 
-         System.out.println(states.get(player).entrySet().stream().map(e -> e.getKey().toString() + ": " + e.getValue().stream().map(s -> s.getLabel().getName()).collect(Collectors.joining(", "))).collect(Collectors.joining("\n")));
+         System.out.println(states.get(player).entrySet().stream().map(e -> e.getKey().toString() + ": " + e.getValue().stream().map(s -> s.label().name()).collect(Collectors.joining(", "))).collect(Collectors.joining("\n")));
 
         if (sts == null || sts.isEmpty()) return false;
 
         for (CooldownState state : sts) {
 
-            boolean equals = state.getLabel().equals(reduced);
-            boolean isExpired = TimerTask.isExpired(getCounter(), state.getStartTime(), context.getDuration());
+            boolean equals = state.label().equals(reduced);
+            boolean isExpired = TimerTask.isExpired(getCounter(), state.startTime(), context.duration());
 
 
-            System.out.println("st: " + state.getLabel().getName() + " eq: " + equals + " exp: " + isExpired);
+            System.out.println("st: " + state.label().name() + " eq: " + equals + " exp: " + isExpired);
             if (equals) {
                 if (isExpired) {
                     sts.remove(state);
-                    states.get(player).put(context.getType(), sts);
+                    states.get(player).put(context.type(), sts);
                     return false;
                 }
                 return true;
@@ -92,7 +92,7 @@ public class CooldownManager {
     }
 
     public void register(ItemStack item, String label, CooldownType type, float duration) {
-        register(item, ItemCooldownContext.of(label, duration, type, true));
+        register(item, new ItemCooldownContext(label, duration, type, true));
     }
 
     public boolean isRegistered(ItemStack item) {
@@ -112,13 +112,13 @@ public class CooldownManager {
 
         if (!states.get(player).containsKey(type)) states.get(player).put(type, new ArrayList<>());
 
-        CooldownState cooldownState = CooldownState.of(ReducedItemStack.from(item), getCounter());
+        CooldownState cooldownState = new CooldownState(ReducedItemStack.from(item), getCounter());
 
         if (!states.get(player).get(type).contains(cooldownState))
             states.get(player).get(type).add(cooldownState);
 
-        if (context.isUsesProgressBar()) {
-            ProgressBarManager.getInstance().addAndShow(player, new ProgressBar(plugin, player, context.getLabel(), context.getDuration()));
+        if (context.usesProgressBar()) {
+            ProgressBarManager.getInstance().addAndShow(player, new ProgressBar(plugin, player, context.label(), context.duration()));
         }
     }
 }

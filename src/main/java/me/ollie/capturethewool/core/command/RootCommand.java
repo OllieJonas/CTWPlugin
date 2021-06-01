@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RootCommand extends AbstractCommand implements CommandExecutor {
+public abstract non-sealed class RootCommand extends AbstractCommand implements CommandExecutor {
 
     private final Map<String, SubCommand> subCommandMap;
 

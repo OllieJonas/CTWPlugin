@@ -16,6 +16,6 @@ public class ExoticCiphersCommand extends SubCommand {
     @Override
     public void execute(Player player, String aliasUsed, List<String> args) {
         Currency currency = CurrencyRegistry.EXOTIC_CURRENCY;
-        player.getInventory().addItem(currency.getItemRepresentation().asQuantity(10));
+        player.getInventory().addItem(currency.itemRepresentation().asQuantity(10));
     }
 }
