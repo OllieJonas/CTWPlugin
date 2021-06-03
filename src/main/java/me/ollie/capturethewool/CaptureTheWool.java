@@ -10,9 +10,11 @@ import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
 import me.ollie.capturethewool.core.hologram.DroppedItemHologramBuilder;
 import me.ollie.capturethewool.core.hologram.PaginatedHologram;
 import me.ollie.capturethewool.core.hologram.PaginatedHologramBuilder;
+import me.ollie.capturethewool.core.portal.Portal;
 import me.ollie.capturethewool.core.pve.DisableSpawners;
 import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
 import me.ollie.capturethewool.core.npc.InteractableVillager;
+import me.ollie.capturethewool.core.util.region.Region;
 import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
 import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
 import me.ollie.capturethewool.items.swords.AssassinsBlade;
@@ -35,8 +37,9 @@ public class CaptureTheWool extends JavaPlugin {
     @Override
     public void onLoad() {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
-
     }
+
+
     @Override
     public void onEnable() {
         this.gamesCore = new GamesCore(this, protocolManager);
@@ -91,6 +94,9 @@ public class CaptureTheWool extends JavaPlugin {
         actionOnEnterVortex.setDescending(true);
 
         actionOnEnterVortex.run();
+
+        Portal portal = new Portal(new Region(new Location(Bukkit.getWorld("world"), 457.5, 4, 73.5), new Location(Bukkit.getWorld("world"), 457.5, 7, 71.5)), new Location(Bukkit.getWorld("world"), 410.5, 4, 70.5), Material.AIR);
+        portal.init();
 
         registerCommands();
         registerEvents();

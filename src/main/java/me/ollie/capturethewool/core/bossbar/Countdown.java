@@ -1,4 +1,4 @@
-package me.ollie.capturethewool.core.util;
+package me.ollie.capturethewool.core.bossbar;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;

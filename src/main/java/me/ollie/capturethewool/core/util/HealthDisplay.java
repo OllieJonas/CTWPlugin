@@ -32,7 +32,7 @@ public class HealthDisplay {
 
     private JavaPlugin plugin;
 
-    private static final Pattern MATCH_PATTERN = Pattern.compile("([^(\\d+/\\d+)]*)");
+    public static final Pattern MATCH_PATTERN = Pattern.compile("([^(\\d+/\\d+)]*)");
 
     private final Map<Integer, LivingEntity> entities;
 
@@ -67,6 +67,14 @@ public class HealthDisplay {
         return original + (health == maxHealth ? ChatColor.GREEN : health != 0.0 ? ChatColor.YELLOW : ChatColor.RED) + " " + health + ChatColor.GRAY + " / " + ChatColor.GREEN + maxHealth;
     }
 
+    public static String removeHealth(String name) {
+        Matcher matcher = MATCH_PATTERN.matcher(name);
+
+        if (!matcher.find() || matcher.groupCount() != 1) return name;
+
+        return StringUtils.strip(matcher.group(0));
+    }
+
 
 
     private class Listener implements org.bukkit.event.Listener {
@@ -93,14 +101,9 @@ public class HealthDisplay {
 
             LivingEntity entity = (LivingEntity) e;
 
+            String name = removeHealth(entity.getName());
+
             if (!isTarget(entity)) return;
-
-            String originalName = entity.getName();
-            Matcher matcher = MATCH_PATTERN.matcher(originalName);
-
-            if (!matcher.find() || matcher.groupCount() != 1) return;
-
-            String name = StringUtils.strip(matcher.group(0));
 
             entity.setCustomName(getDisplayName(name, entity, damage));
 

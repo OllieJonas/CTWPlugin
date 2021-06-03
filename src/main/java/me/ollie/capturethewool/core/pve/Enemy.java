@@ -73,14 +73,6 @@ public abstract class Enemy<T extends LivingEntity> {
         return new Modifier(attribute, operation, amount);
     }
 
-    private record Modifier(Attribute attribute,
-                           AttributeModifier.Operation operation, double amount) {
-
-        public AttributeModifier toModifier() {
-            return new AttributeModifier(attribute.getKey().asString(), amount, operation);
-        }
-    }
-
     private static class Listener implements org.bukkit.event.Listener {
 
         @EventHandler

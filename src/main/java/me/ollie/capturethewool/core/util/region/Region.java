@@ -24,7 +24,7 @@ public class Region {
     }
 
     public void draw() {
-        LocationUtil.getOutlines(first, second).forEach(l -> first.getWorld().getBlockAt(l).setType(Material.LIME_WOOL));
+        RegionUtil.getOutlines(first, second).forEach(l -> first.getWorld().getBlockAt(l).setType(Material.LIME_WOOL));
     }
 
     public boolean withinRange(Location location, int range) {

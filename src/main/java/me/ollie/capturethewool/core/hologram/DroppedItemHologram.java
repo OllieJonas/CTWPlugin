@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 
 public class DroppedItemHologram {
 
+    private static final int DEFAULT_DROP_RADIUS = 3;
+
     @FunctionalInterface
     public interface OnPickup {
         OnPickup IDENTITY = (p, l) -> {};
@@ -68,19 +70,19 @@ public class DroppedItemHologram {
     private Hologram itemHologram;
 
     public static DroppedItemHologram uniqueDrop(JavaPlugin plugin, Entity entity, ItemStack item, Player player, OnPickup onPickup, OnDrop onDrop) {
-        return entityDrop(plugin, entity, item, 2, true, Collections.singleton(player), onPickup, onDrop);
+        return entityDrop(plugin, entity, item, DEFAULT_DROP_RADIUS, true, Collections.singleton(player), onPickup, onDrop);
     }
 
     public static DroppedItemHologram entityDrop(JavaPlugin plugin, Entity entity, ItemStack item) {
-        return entityDrop(plugin, entity, item, 2, true, Bukkit.getOnlinePlayers(), OnPickup.IDENTITY);
+        return entityDrop(plugin, entity, item, DEFAULT_DROP_RADIUS, true, Bukkit.getOnlinePlayers(), OnPickup.IDENTITY);
     }
 
     public static DroppedItemHologram entityDrop(JavaPlugin plugin, Entity entity, ItemStack item, Collection<? extends Player> audience) {
-        return entityDrop(plugin, entity, item, 2, true, audience, OnPickup.IDENTITY);
+        return entityDrop(plugin, entity, item, DEFAULT_DROP_RADIUS, true, audience, OnPickup.IDENTITY);
     }
 
     public static DroppedItemHologram specialDrop(JavaPlugin plugin, Entity entity, ItemStack item, Collection<? extends Player> players, OnPickup onPickup) {
-        return entityDrop(plugin, entity, item, 2, true, players, onPickup);
+        return entityDrop(plugin, entity, item, DEFAULT_DROP_RADIUS, true, players, onPickup);
     }
 
     public static DroppedItemHologram entityDrop(JavaPlugin plugin, Entity entity, ItemStack item, int dropRadius, boolean displayTitle, Collection<? extends Player> audience, OnPickup onPickup) {
@@ -89,7 +91,6 @@ public class DroppedItemHologram {
 
     public static DroppedItemHologram entityDrop(JavaPlugin plugin, Entity entity, ItemStack item, int dropRadius, boolean displayTitle, Collection<? extends Player> audience, OnPickup onPickup, OnDrop onDrop) {
         Location location = LocationUtil.randomLocationAround(entity.getLocation(), dropRadius).add(0, 1, 0);
-        audience.forEach(p -> p.sendMessage(location.toString()));
         return new DroppedItemHologram(plugin, location, displayTitle, item, audience, onPickup, onDrop);
     }
 

@@ -1,7 +1,8 @@
-package me.ollie.capturethewool.core.util;
+package me.ollie.capturethewool.core.bossbar;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import me.ollie.capturethewool.core.util.TimeUnitToTicks;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

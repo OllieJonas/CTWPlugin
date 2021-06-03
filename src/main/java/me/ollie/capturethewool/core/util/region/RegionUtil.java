@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("DuplicatedCode")
 @UtilityClass
-public class LocationUtil {
+public class RegionUtil {
 
     public static List<Location> getFaces(Location l1, Location l2) {
         Assertions.assertThat(l1.getWorld()).isEqualTo(l2.getWorld());

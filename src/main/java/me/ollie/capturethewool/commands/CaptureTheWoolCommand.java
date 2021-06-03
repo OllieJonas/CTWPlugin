@@ -22,5 +22,8 @@ public class CaptureTheWoolCommand extends RootCommand {
         addSubCommand(new EmojiCommand());
         addSubCommand(new GCFreeCommand());
         addSubCommand(new FakeCollectCommand());
+        addSubCommand(new AbilityCommand());
+        addSubCommand(new VectorCircleCommand());
+        addSubCommand(new BossCommand());
     }
 }

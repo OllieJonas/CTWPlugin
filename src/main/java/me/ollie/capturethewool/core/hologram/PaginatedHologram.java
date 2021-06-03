@@ -120,7 +120,9 @@ public class PaginatedHologram {
         }
 
         private void leave(Player player) {
-            int curr = currPage.get(player);
+            Integer curr = currPage.get(player);
+            if (curr == null) return;
+
             holograms.get(curr).getVisibilityManager().hideTo(player);
             currPage.remove(player);
         }

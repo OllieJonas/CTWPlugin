@@ -2,11 +2,7 @@ package me.ollie.capturethewool.core.pve;
 
 import me.ollie.capturethewool.CaptureTheWool;
 import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
-import me.ollie.capturethewool.core.util.ItemStackUtil;
 import me.ollie.capturethewool.core.util.ListUtil;
-import me.ollie.capturethewool.items.ItemRarity;
-import me.ollie.capturethewool.items.PowerfulItemRegistry;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +12,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public record EnemyDrops(Set<ChanceDrop> drops) {
+public record EnemyDrops(List<ChanceDrop> drops) {
 
     private static final Random RANDOM = new Random();
 
@@ -44,10 +40,12 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
 
     public static class Builder {
 
-        private final Set<ChanceDrop> drops;
+        private final List<ChanceDrop> drops;
+
+        private ChanceDrop last;
 
         private Builder() {
-            this.drops = new HashSet<>();
+            this.drops = new ArrayList<>();
         }
 
         public Builder drop(float chance, Drop drop) {
@@ -56,10 +54,20 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
 
         public Builder drop(ChanceDrop drop) {
             drops.add(drop);
+            last = drop;
             return this;
         }
 
-        public Builder drops(Set<ChanceDrop> d) {
+        public Builder repeatLast(int times) {
+            if (last == null) return this;
+
+            for (int i = 0; i < times; i++) {
+                drops.add(last);
+            }
+            return this;
+        }
+
+        public Builder drops(List<ChanceDrop> d) {
             drops.addAll(d);
             return this;
         }
@@ -77,8 +85,6 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
 
     sealed interface Drop permits Normal, Special, Unique {
         DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience);
-
-        ItemStack asItem();
     }
 
     public final record Normal(ItemStack item, int randomAmount) implements Drop {
@@ -88,10 +94,6 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
             return DroppedItemHologram.entityDrop(PLUGIN, entity, item.asQuantity(1 + RANDOM.nextInt(randomAmount)), audience);
         }
 
-        @Override
-        public ItemStack asItem() {
-            return item;
-        }
     }
 
     public final record Special(Supplier<ItemStack> item, DroppedItemHologram.OnPickup onPickup) implements Drop {
@@ -105,10 +107,6 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
             return DroppedItemHologram.specialDrop(PLUGIN, entity, item.get(), audience, onPickup);
         }
 
-        @Override
-        public ItemStack asItem() {
-            return item.get();
-        }
     }
 
     public final record Unique(Supplier<ItemStack> item, DroppedItemHologram.OnPickup onPickup, DroppedItemHologram.OnDrop onDrop) implements Drop {
@@ -130,9 +128,5 @@ public record EnemyDrops(Set<ChanceDrop> drops) {
             return DroppedItemHologram.uniqueDrop(PLUGIN, entity, item.get(), ListUtil.random(potentialRecipients), onPickup, onDrop);
         }
 
-        @Override
-        public ItemStack asItem() {
-            return item.get();
-        }
     }
 }
