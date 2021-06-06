@@ -1,7 +1,5 @@
 package me.ollie.capturethewool.core.image;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -14,14 +12,11 @@ public class ImageRepository {
     public static class Factory {
 
         public static ImageRenderer get(String name) {
-            switch (name.toLowerCase()) {
-                case "dab":
-                    return DAB;
-                case "heart":
-                    return HEART;
-                default:
-                    return null;
-            }
+            return switch (name.toLowerCase()) {
+                case "dab" -> DAB;
+                case "heart" -> HEART;
+                default -> null;
+            };
         }
 
         public static Vector getTranslation(String name) {

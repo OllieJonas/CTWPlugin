@@ -14,8 +14,6 @@ public class VectorCircle extends BukkitRunnable {
 
     private final LivingEntity entity;
 
-    private final Location location;
-
     private final double speed;
 
     private final double radius;
@@ -32,8 +30,6 @@ public class VectorCircle extends BukkitRunnable {
         this.speed = speed;
         this.radius = radius;
         this.atLocation = atLocation;
-
-        this.location = getLocation();
     }
 
     @Override

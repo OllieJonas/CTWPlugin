@@ -59,7 +59,7 @@ public abstract class GUI {
 
     public void init() {
         addItems();
-        items.entrySet().forEach((e -> inventory.setItem(e.getKey(), e.getValue().getItem())));
+        items.entrySet().forEach((e -> inventory.setItem(e.getKey(), e.getValue().item())));
 
         if (hasBorder)
             ChestGUIUtils.calculateFiller(size).forEach(i -> inventory.setItem(i, BORDER_ITEM));

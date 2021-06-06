@@ -35,9 +35,9 @@ public class VectorCircleCommand extends SubCommand {
 
         List<Vector> axes = List.of(new Vector(0, 1, 0));
 //         List<Vector> axes = Permutations.of(doubles, 3).map(p -> new Vector(p.get(0), p.get(1), p.get(2))).toList();
-         List<Bee> bees = IntStream.range(0, 3).mapToObj(i -> player.getWorld().spawn(player.getEyeLocation(), Bee.class)).toList();
+         List<Bee> bees = IntStream.range(0, 3).mapToObj(i -> player.getWorld().spawn(player.getEyeLocation(), Bee.class)).collect(Collectors.toList());
 
-         List<VectorCircle> circles = bees.stream().map(bee -> new VectorCircle(player, axes.get(0), 0.1, 2.75, bee::teleport)).toList();
+         List<VectorCircle> circles = bees.stream().map(bee -> new VectorCircle(player, axes.get(0), 0.1, 2.75, bee::teleport)).collect(Collectors.toList());
 //        List<VectorCircle> circles = Permutations.of(doubles, 3).map(p -> new Vector(p.get(0), p.get(1), p.get(2))).map(v -> new VectorCircle(player, v, 0.2, 2.75, l -> l.getWorld().spawnParticle(Particle.REDSTONE, l, 1, new Particle.DustOptions(Color.PURPLE, 1)))).collect(Collectors.toList());
         player.sendMessage("" + circles.size());
         circles.forEach(c -> c.runTaskTimer(CaptureTheWool.getInstance(), aLong.getAndAdd(10), 1L));

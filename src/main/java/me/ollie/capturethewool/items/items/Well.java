@@ -14,19 +14,19 @@ import java.util.function.Consumer;
 @Builder
 public class Well {
 
-    private Location location;
+    private final Location location;
 
-    private Particle vortexParticle;
+    private final Particle vortexParticle;
 
-    private Particle circleParticle;
+    private final Particle circleParticle;
 
-    private Consumer<LivingEntity> onEnter;
+    private final Consumer<LivingEntity> onEnter;
 
-    private int radius;
+    private final int radius;
 
-    private long onEnterFrequency;
+    private final long onEnterFrequency;
 
-    private long duration;
+    private final long duration;
 
     @Builder.Default
     private boolean circleRainbow = false;

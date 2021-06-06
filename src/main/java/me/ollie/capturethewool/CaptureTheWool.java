@@ -1,6 +1,5 @@
 package me.ollie.capturethewool;
 
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
@@ -10,13 +9,16 @@ import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
 import me.ollie.capturethewool.core.hologram.DroppedItemHologramBuilder;
 import me.ollie.capturethewool.core.hologram.PaginatedHologram;
 import me.ollie.capturethewool.core.hologram.PaginatedHologramBuilder;
-import me.ollie.capturethewool.core.portal.Portal;
-import me.ollie.capturethewool.core.pve.DisableSpawners;
 import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
 import me.ollie.capturethewool.core.npc.InteractableVillager;
-import me.ollie.capturethewool.core.util.region.Region;
-import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
+import me.ollie.capturethewool.core.portal.Portal;
+import me.ollie.capturethewool.core.pve.DisableSpawners;
 import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
+import me.ollie.capturethewool.core.util.region.Region;
+import me.ollie.capturethewool.game.key.DungeonDoor;
+import me.ollie.capturethewool.game.key.KeyListener;
+import me.ollie.capturethewool.game.key.LockType;
+import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
 import me.ollie.capturethewool.items.swords.AssassinsBlade;
 import org.bukkit.*;
 import org.bukkit.entity.Villager;
@@ -91,6 +93,15 @@ public class CaptureTheWool extends JavaPlugin {
                 12,
                 player -> player.setVelocity(new Vector(player.getVelocity().getX(), 0.4, player.getVelocity().getZ())));
 
+
+        DungeonDoor door = new DungeonDoor(ChatColor.YELLOW + "" + ChatColor.BOLD + "Pirate Bay", new Region(
+                new Location(Bukkit.getWorld("world"), -1712, 94, 724),
+                new Location(Bukkit.getWorld("world"), -1712, 100, 729)),
+                new Location(Bukkit.getWorld("world"), -1712, 96, 724),
+                LockType.GOLD);
+
+        door.init();
+
         actionOnEnterVortex.setDescending(true);
 
         actionOnEnterVortex.run();
@@ -111,6 +122,7 @@ public class CaptureTheWool extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AssassinsBlade(), this);
         getServer().getPluginManager().registerEvents(new DisableSpawners(), this);
         getServer().getPluginManager().registerEvents(new PowerfulItemEvents(), this);
+        getServer().getPluginManager().registerEvents(new KeyListener(), this);
     }
 
 

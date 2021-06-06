@@ -1,8 +1,5 @@
 package me.ollie.capturethewool.core.hologram;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import lombok.Builder;
-import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

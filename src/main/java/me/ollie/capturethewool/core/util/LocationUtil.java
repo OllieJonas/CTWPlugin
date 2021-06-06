@@ -36,4 +36,28 @@ public class LocationUtil {
 
         return location;
     }
+
+    public static double distanceSquared(Location loc1, Location loc2) {
+        return loc1.distanceSquared(loc2);
+    }
+
+    public static boolean veryWeakEquals(Location loc1, Location loc2) {
+        if (loc1.getWorld() != loc2.getWorld()) return false;
+
+        if (loc1.getBlockX() != loc2.getBlockX()) return false;
+
+        if (loc2.getBlockY() != loc2.getBlockY()) return false;
+
+        return loc2.getBlockZ() == loc2.getBlockZ();
+    }
+
+    public static boolean weakEquals(Location loc1, Location loc2) {
+        if (loc1.getWorld() != loc2.getWorld()) return false;
+
+        if (loc1.getX() != loc2.getX()) return false;
+
+        if (loc2.getY() != loc2.getY()) return false;
+
+        return loc2.getZ() == loc2.getZ();
+    }
 }

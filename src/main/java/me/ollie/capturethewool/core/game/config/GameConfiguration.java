@@ -1,15 +1,5 @@
 package me.ollie.capturethewool.core.game.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record GameConfiguration(String name, int maxPlayers, int minPlayersToStart) {
 
-@Getter
-@AllArgsConstructor
-public class GameConfiguration {
-
-    private final String name;
-
-    private final int maxPlayers;
-
-    private final int minPlayersToStart;
 }

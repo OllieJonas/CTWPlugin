@@ -1,7 +1,7 @@
 package me.ollie.capturethewool.commands.subcommands;
 
 import me.ollie.capturethewool.core.command.SubCommand;
-import me.ollie.capturethewool.enemy.boss.undeadcaptain.TheCaptain;
+import me.ollie.capturethewool.boss.pirateboss.TheCaptain;
 import org.bukkit.entity.Player;
 
 import java.util.List;

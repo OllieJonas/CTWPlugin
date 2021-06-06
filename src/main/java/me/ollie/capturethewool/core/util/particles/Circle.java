@@ -67,15 +67,15 @@ public class Circle extends BukkitRunnable {
     }
 
     private Color getColour(int i) {
-        switch (i) {
-            case 0: return Color.RED;
-            case 1: return Color.ORANGE;
-            case 2: return Color.YELLOW;
-            case 3: return Color.LIME;
-            case 4: return Color.BLUE;
-            case 5: return Color.PURPLE;
-            case 6: return Color.FUCHSIA;
-            default: return Color.LIME;
-        }
+        return switch (i) {
+            case 0 -> Color.RED;
+            case 1 -> Color.ORANGE;
+            case 2 -> Color.YELLOW;
+            case 3 -> Color.LIME;
+            case 4 -> Color.BLUE;
+            case 5 -> Color.PURPLE;
+            case 6 -> Color.FUCHSIA;
+            default -> Color.LIME;
+        };
     }
 }

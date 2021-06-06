@@ -27,7 +27,7 @@ public class PowerfulItemCooldownInjector {
         if (doesntRequireCooldown) return;
 
         ItemStack itemStack = item.getItemStack();
-        float cooldownDuration = item.getAbilityInformation().getCooldownDuration();
+        float cooldownDuration = item.getAbilityInformation().cooldownDuration();
         String name = item.getName();
 
         if (cooldownDuration <= 0) return;

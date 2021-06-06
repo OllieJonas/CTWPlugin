@@ -39,9 +39,9 @@ public class GUIEvents implements Listener {
             if (event.getInventory().getType() != InventoryType.CHEST) // weird thing in paper where it considers your hotbar n stuff as well
                 return;
 
-            item.getAction().accept(player, event.getCurrentItem());
+            item.action().accept(player, event.getCurrentItem());
 
-            if (item.isItemClosesMenu())
+            if (item.itemClosesMenu())
                 manager.closeGuiFor(player);
         }
     }

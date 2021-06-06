@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.core.pve;
 
-import me.ollie.capturethewool.core.util.region.RegionUtil;
+import me.ollie.capturethewool.core.util.LocationUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -88,7 +88,7 @@ public class Spawner<T extends Enemy<?>> {
         @EventHandler
         public void onBreak(BlockBreakEvent event) {
             Location loc = event.getBlock().getLocation();
-            if (RegionUtil.veryWeakEquals(loc, location)) {
+            if (LocationUtil.veryWeakEquals(loc, location)) {
                 isActive = false;
             }
         }

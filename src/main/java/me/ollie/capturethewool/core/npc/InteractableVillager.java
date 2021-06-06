@@ -20,8 +20,6 @@ public class InteractableVillager {
 
     private static final Set<Villager> villagers = new HashSet<>();
 
-    private final JavaPlugin plugin;
-
     private final Villager villager;
 
     private final Hologram title;
@@ -29,12 +27,17 @@ public class InteractableVillager {
     private final Consumer<Player> onInteract;
 
     public InteractableVillager(JavaPlugin plugin, Location location, Villager.Profession profession, String title, String subTitle, Consumer<Player> onInteract) {
-        this.plugin = plugin;
         this.villager = buildVillager(location, profession);
         this.title = buildTitle(plugin, location, title, subTitle);
         this.onInteract = onInteract;
 
         plugin.getServer().getPluginManager().registerEvents(new Listener(), plugin);
+    }
+
+    public void remove() {
+        title.delete();
+        villagers.remove(villager);
+        villager.remove();
     }
 
     private Villager buildVillager(Location location, Villager.Profession profession) {

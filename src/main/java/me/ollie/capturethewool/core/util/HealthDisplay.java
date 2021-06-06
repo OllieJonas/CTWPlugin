@@ -2,46 +2,30 @@ package me.ollie.capturethewool.core.util;
 
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("RegExpDuplicateCharacterInClass")
-public class HealthDisplay {
-
-    private JavaPlugin plugin;
+public record HealthDisplay(JavaPlugin plugin) {
 
     public static final Pattern MATCH_PATTERN = Pattern.compile("([^(\\d+/\\d+)]*)");
-
-    private final Map<Integer, LivingEntity> entities;
 
     @Getter
     private static HealthDisplay instance;
 
     public HealthDisplay(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.entities = new HashMap<>();
 
         plugin.getServer().getPluginManager().registerEvents(new Listener(), plugin);
 
@@ -74,7 +58,6 @@ public class HealthDisplay {
 
         return StringUtils.strip(matcher.group(0));
     }
-
 
 
     private class Listener implements org.bukkit.event.Listener {
@@ -111,8 +94,7 @@ public class HealthDisplay {
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onSpawn(EntitySpawnEvent event) {
-            if (!(event.getEntity() instanceof LivingEntity)) return;
-            LivingEntity entity = (LivingEntity) event.getEntity();
+            if (!(event.getEntity() instanceof LivingEntity entity)) return;
             if (!isTarget(entity)) return;
 
             String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();

@@ -82,9 +82,9 @@ public class Lobby {
         waitingForPlayers.showTo(player);
 
         LobbyItems.addItems(player, game.isKitGame());
-        sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has joined! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().getMaxPlayers() + ChatColor.GRAY + ")");
+        sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has joined! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().maxPlayers() + ChatColor.GRAY + ")");
 
-        if (!requireForceStart && players.size() >= game.getConfiguration().getMinPlayersToStart())
+        if (!requireForceStart && players.size() >= game.getConfiguration().minPlayersToStart())
             beginStartingGame();
     }
 
@@ -99,7 +99,7 @@ public class Lobby {
 
         waitingForPlayers.hideFrom(player);
 
-        sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has left! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().getMaxPlayers() + ChatColor.GRAY + ")");
+        sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has left! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().maxPlayers() + ChatColor.GRAY + ")");
         player.sendMessage(ChatColor.GRAY + "You left the lobby!");
         onLeaveAction.accept(player);
     }
@@ -124,7 +124,7 @@ public class Lobby {
     }
 
     public String titleMessage(String message) {
-        return ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getConfiguration().getName() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + message;
+        return ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getConfiguration().name() + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + message;
     }
 
     public enum State {

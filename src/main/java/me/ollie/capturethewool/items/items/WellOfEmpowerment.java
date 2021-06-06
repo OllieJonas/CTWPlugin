@@ -1,12 +1,8 @@
 package me.ollie.capturethewool.items.items;
 
-import me.ollie.capturethewool.CaptureTheWool;
-import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
-import me.ollie.capturethewool.core.util.particles.Circle;
 import me.ollie.capturethewool.items.ItemRarity;
 import me.ollie.capturethewool.items.meta.AbilityInformation;
 import me.ollie.capturethewool.items.types.PowerfulItem;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;

@@ -1,4 +1,4 @@
-package me.ollie.capturethewool.boss.abilities;
+package me.ollie.capturethewool.boss.abilities.powerful;
 
 import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.util.VectorUtil;
@@ -28,8 +28,9 @@ public class SkeletalHorseWave extends Ability {
     }
 
     @Override
-    public void power(Location start) {
+    public void power(LivingEntity entity) {
 
+        Location start = entity.getLocation();
         Set<SkeletonHorse> horses = new HashSet<>();
         Set<Slime> dummyTargets = new HashSet<>();
 
@@ -56,8 +57,8 @@ public class SkeletalHorseWave extends Ability {
             Location location = h.getLocation().add(direction.clone().setY(0)).setDirection(direction);
             h.teleport(location);
             location.getNearbyEntities(1.5, 1.5, 1.5).forEach(e -> {
-                if (e instanceof LivingEntity entity) {
-                    damage(new DamageContext(h, entity));
+                if (e instanceof LivingEntity e1) {
+                    damage(new DamageContext(h, e1));
                 }
             });
             feetParticles(location.clone());

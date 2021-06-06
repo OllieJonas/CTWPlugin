@@ -1,6 +1,7 @@
 package me.ollie.capturethewool.core.pve;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.ollie.capturethewool.core.GamesCore;
 import me.ollie.capturethewool.core.util.HealthDisplay;
 import org.bukkit.Location;
@@ -31,7 +32,8 @@ public abstract class Enemy<T extends LivingEntity> {
 
     protected final List<Modifier> modifiers;
 
-    protected final EnemyDrops drops;
+    @Setter
+    protected EnemyDrops drops;
 
     private static org.bukkit.event.Listener listener;
 

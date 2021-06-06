@@ -1,15 +1,9 @@
 package me.ollie.capturethewool.items.meta;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public record AbilityInformation(String title, String description, float cooldownDuration) {
 
-@Getter
-@AllArgsConstructor(staticName = "of")
-public class AbilityInformation {
+    public static AbilityInformation of(String title, String description, float cooldownDuration) {
+        return new AbilityInformation(title, description, cooldownDuration);
+    }
 
-    private final String title;
-
-    private final String description;
-
-    private final float cooldownDuration;
 }

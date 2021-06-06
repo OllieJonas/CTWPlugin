@@ -20,7 +20,7 @@ public class HolographicDamageListener implements Listener {
 
     private static final Random RANDOM = new Random();
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     private boolean isActive;
 

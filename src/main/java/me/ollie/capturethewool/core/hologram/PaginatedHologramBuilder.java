@@ -12,11 +12,11 @@ public class PaginatedHologramBuilder {
 
     private String title;
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     private Location pagesLocation;
 
-    private List<Hologram> holograms;
+    private final List<Hologram> holograms;
 
     private Location prevButton;
 

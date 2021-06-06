@@ -22,5 +22,5 @@ public abstract class Ability {
 
     public abstract void damage(DamageContext context);
 
-    public abstract void power(Location start);
+    public abstract void power(LivingEntity user);
 }

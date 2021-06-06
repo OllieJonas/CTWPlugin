@@ -19,19 +19,19 @@ import java.util.stream.Collectors;
 
 public class PaginatedHologram {
 
-    private Map<Player, Integer> currPage;
+    private final Map<Player, Integer> currPage;
 
-    private String title;
+    private final String title;
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
-    private Location pagesLocation;
+    private final Location pagesLocation;
 
-    private List<Hologram> holograms;
+    private final List<Hologram> holograms;
 
-    private Hologram prevButton;
+    private final Hologram prevButton;
 
-    private Hologram nextButton;
+    private final Hologram nextButton;
 
     private final int noPages;
 
