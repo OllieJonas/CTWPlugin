@@ -1,7 +1,6 @@
 package me.ollie.capturethewool.core.ability;
 
 import me.ollie.capturethewool.CaptureTheWool;
-import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 

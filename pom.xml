@@ -54,7 +54,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <outputDirectory>/home/ollie/Downloads/Minecraft/plugins</outputDirectory>
+                    <outputDirectory>C:\Users\ollie\OneDrive\Documents\MC1.16\plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

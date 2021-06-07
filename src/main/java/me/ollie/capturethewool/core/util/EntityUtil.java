@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,11 +73,11 @@ public class EntityUtil {
     }
 
     public static <T extends LivingEntity> Optional<Tuple2<T, Double>> getClosest(LivingEntity entity, Class<T> clazz, double x, double y, double z) {
-        Stream<T> livingEntities = entity.getNearbyEntities(x, y, z).stream()
+        Supplier<Stream<T>> livingEntities = () -> entity.getNearbyEntities(x, y, z).stream()
                 .filter(e -> e instanceof LivingEntity)
                 .map(e -> (LivingEntity) e)
                 .filter(e -> e.getClass().isAssignableFrom(clazz))
                 .map(clazz::cast);
-        return Seq.zip(livingEntities, livingEntities.map(e -> LocationUtil.distanceSquared(e.getLocation(), entity.getLocation()))).min(Comparator.comparingDouble(Tuple2::v2));
+        return Seq.zip(livingEntities.get(), livingEntities.get().map(e -> LocationUtil.distanceSquared(e.getLocation(), entity.getLocation()))).min(Comparator.comparingDouble(Tuple2::v2));
     }
 }

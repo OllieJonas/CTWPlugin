@@ -10,12 +10,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.jooq.lambda.Seq;
+import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Explosion {
 
@@ -33,20 +38,19 @@ public class Explosion {
         this.radius = radius;
     }
 
+    // this is practically unreadable but hey its fun to do one-liners right? :D
     public void explode() {
-        List<FallingBlock> fallingBlocks = BlockUtil.getInRadius(location, radius).keySet().stream()
-                .peek(b -> getJanitor().mark(b.getLocation().clone(), b.getType()))
-                .map(b -> location.getWorld().spawnFallingBlock(b.getLocation(), b.getBlockData()))
-                .peek(fb -> fb.setDropItem(false))
-                .collect(Collectors.toList());
-
-        Seq.of(fallingBlocks.toArray(new FallingBlock[0]))
-                .zip(fallingBlocks.stream()
+        Seq.seq(BlockUtil.getInRadius(location, radius).keySet())
+                .peek(b -> getJanitor().mark(b.getLocation().clone(), b.getType())) // mark block for cleanup
+                .map(b -> location.getWorld().spawnFallingBlock(b.getLocation(), b.getBlockData())) // spawn falling block
+                .peek(fb -> fb.setDropItem(false)) // cant drop item
+                .duplicate() // duplicate stream of falling blocks
+                .map((fb1, fb2) -> new Tuple2<>(fb1, fb2
                         .map(fb -> VectorUtil.trajectory(location.toVector(), fb.getLocation().toVector()))
-                        .map(v -> v.setY(Math.abs(v.getY())))
-                        .collect(Collectors.toList()))
-                .peek(fb -> getJanitor().mark(fb.v1()))
-                .forEach(v -> VectorUtil.velocity(v.v1(),
+                        .map(v -> v.setY(Math.abs(v.getY())))))  // map second sequence to vectors for falling blocks
+                .map((fallingBlocks, vectors) -> Seq.zip(fallingBlocks, vectors)) // zip them
+                .peek(fb -> getJanitor().mark(fb.v1())) // mark new falling block
+                .forEach(v -> VectorUtil.velocity(v.v1(), // set velocity of falling block to vector
                         v.v2(),
                         0.5 + 0.25 * Math.random(),
                         false,

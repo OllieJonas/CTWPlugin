@@ -16,15 +16,12 @@ public class KeyListener implements Listener {
         @EventHandler
         public void onInteract(PlayerInteractEvent event) {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                event.getPlayer().sendMessage("here1");
                 Player player = event.getPlayer();
                 Block block = event.getClickedBlock();
 
                 if (block == null) return;
                 if (player.getInventory().getItemInMainHand().getType() == Material.AIR) return;
                 if (!KeyType.isAKey(player.getInventory().getItemInMainHand())) return;
-
-                player.sendMessage("here");
 
                 // only need to use material here bc we've already checked if its a key w KeyType.isAKey();
                 KeyType key = KeyType.keyFrom(player.getInventory().getItemInMainHand().getType());
