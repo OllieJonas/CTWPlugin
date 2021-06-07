@@ -2,7 +2,7 @@ package me.ollie.capturethewool.core.pve;
 
 import me.ollie.capturethewool.CaptureTheWool;
 import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
-import me.ollie.capturethewool.core.util.ListUtil;
+import me.ollie.capturethewool.core.util.CollectionUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -125,7 +125,7 @@ public record EnemyDrops(List<ChanceDrop> drops) {
 
         @Override
         public DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> potentialRecipients) {
-            return DroppedItemHologram.uniqueDrop(PLUGIN, entity, item.get(), ListUtil.random(potentialRecipients), onPickup, onDrop);
+            return DroppedItemHologram.uniqueDrop(PLUGIN, entity, item.get(), CollectionUtil.random(potentialRecipients), onPickup, onDrop);
         }
 
     }

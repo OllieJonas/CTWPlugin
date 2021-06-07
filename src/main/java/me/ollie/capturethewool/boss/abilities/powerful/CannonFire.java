@@ -2,9 +2,10 @@ package me.ollie.capturethewool.boss.abilities.powerful;
 
 import me.ollie.capturethewool.CaptureTheWool;
 import me.ollie.capturethewool.core.ability.Ability;
+import me.ollie.capturethewool.core.ability.Damage;
 import me.ollie.capturethewool.core.explosion.Explosion;
 import me.ollie.capturethewool.core.util.EntityUtil;
-import me.ollie.capturethewool.core.util.ListUtil;
+import me.ollie.capturethewool.core.util.CollectionUtil;
 import me.ollie.capturethewool.core.util.LocationUtil;
 import me.ollie.capturethewool.core.util.VectorUtil;
 import org.bukkit.Bukkit;
@@ -13,8 +14,8 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -41,13 +42,8 @@ public class CannonFire extends Ability {
     }
 
     @Override
-    public void damage(DamageContext context) {
-
-    }
-
-    @Override
     public void power(LivingEntity user) {
-        Location random = ListUtil.random(locations);
+        Location random = CollectionUtil.random(locations);
         EntityUtil.getClosest(user, Player.class)
                 .ifPresentOrElse(
                         t -> cannonFire(random, t.v1().getLocation()),
@@ -73,6 +69,8 @@ public class CannonFire extends Ability {
             Explosion explosion = new Explosion(to, 2);
             explosion.explode();
             // insert damage here
+
+            Damage.RADIUS.inflict(Damage.Radius.Context.of(to, 3, 8D, List.of(Skeleton.class)));
 
             primed.remove();
         }, time);

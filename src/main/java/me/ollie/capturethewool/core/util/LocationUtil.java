@@ -41,6 +41,10 @@ public class LocationUtil {
         return loc1.distanceSquared(loc2);
     }
 
+    public static double distance(Location loc1, Location loc2) {
+        return loc1.distance(loc2);
+    }
+
     public static boolean veryWeakEquals(Location loc1, Location loc2) {
         if (loc1.getWorld() != loc2.getWorld()) return false;
 

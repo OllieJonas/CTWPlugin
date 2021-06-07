@@ -1,7 +1,6 @@
 package me.ollie.capturethewool.boss.abilities.powerful;
 
 import me.ollie.capturethewool.core.ability.Ability;
-import me.ollie.capturethewool.core.util.VectorUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -13,19 +12,6 @@ import java.util.Set;
 
 public class SkeletalHorseWave extends Ability {
 
-    record DamageContext(SkeletonHorse horse, LivingEntity target) implements Ability.DamageContext {
-
-        @Override
-        public double damage() {
-            return 8D;
-        }
-    }
-    @Override
-    public void damage(Ability.DamageContext context) {
-        if (context instanceof DamageContext horseCtx) {
-            horseCtx.target().damage(context.damage());
-        }
-    }
 
     @Override
     public void power(LivingEntity entity) {
@@ -58,7 +44,7 @@ public class SkeletalHorseWave extends Ability {
             h.teleport(location);
             location.getNearbyEntities(1.5, 1.5, 1.5).forEach(e -> {
                 if (e instanceof LivingEntity e1) {
-                    damage(new DamageContext(h, e1));
+                    // damage(new DamageContext(h, e1));
                 }
             });
             feetParticles(location.clone());

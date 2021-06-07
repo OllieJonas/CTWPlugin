@@ -1,5 +1,6 @@
 package me.ollie.capturethewool.core.util;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -8,11 +9,10 @@ import org.bukkit.entity.Player;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,13 +59,24 @@ public class EntityUtil {
     }
 
     public static Optional<Tuple2<LivingEntity, Double>> getClosest(LivingEntity entity, double x, double y, double z) {
-        Stream<LivingEntity> livingEntities = entity.getNearbyEntities(x, y, z).stream()
+        return entity.getNearbyEntities(x, y, z).stream()
                 .filter(e -> e instanceof LivingEntity)
-                .map(e -> (LivingEntity) e);
-        return Seq.zip(livingEntities,
-                livingEntities
-                .map(e -> LocationUtil.distanceSquared(e.getLocation(), entity.getLocation())))
+                .map(e -> (LivingEntity) e)
+                .map(e -> new Tuple2<>(e, LocationUtil.distance(entity.getLocation(), e.getLocation())))
                 .min(Comparator.comparingDouble(Tuple2::v2));
+    }
+
+    public static Collection<Tuple2<LivingEntity, Double>> getEntitiesAround(Location location, double radius) {
+        return getEntitiesAround(location, radius, Collections.emptyList());
+    }
+
+    public static Collection<Tuple2<LivingEntity, Double>> getEntitiesAround(Location location, double radius, Collection<Class<? extends LivingEntity>> exclusions) {
+        return Seq.seq(location.getNearbyEntities(radius, radius, radius))
+                .filter(e -> e instanceof LivingEntity)
+                .map(e -> (LivingEntity) e)
+                .filter(e -> !exclusions.contains(e.getClass()))
+                .map(e -> new Tuple2<>(e, LocationUtil.distance(location, e.getLocation())))
+                .collect(Collectors.toList());
     }
 
     public static <T extends LivingEntity> Optional<Tuple2<T, Double>> getClosest(LivingEntity entity, Class<T> clazz) {
@@ -73,11 +84,12 @@ public class EntityUtil {
     }
 
     public static <T extends LivingEntity> Optional<Tuple2<T, Double>> getClosest(LivingEntity entity, Class<T> clazz, double x, double y, double z) {
-        Supplier<Stream<T>> livingEntities = () -> entity.getNearbyEntities(x, y, z).stream()
+        return entity.getNearbyEntities(x, y, z).stream()
                 .filter(e -> e instanceof LivingEntity)
                 .map(e -> (LivingEntity) e)
                 .filter(e -> e.getClass().isAssignableFrom(clazz))
-                .map(clazz::cast);
-        return Seq.zip(livingEntities.get(), livingEntities.get().map(e -> LocationUtil.distanceSquared(e.getLocation(), entity.getLocation()))).min(Comparator.comparingDouble(Tuple2::v2));
+                .map(clazz::cast)
+                .map(e -> new Tuple2<>(e, LocationUtil.distance(entity.getLocation(), e.getLocation())))
+                .min(Comparator.comparingDouble(Tuple2::v2));
     }
 }
