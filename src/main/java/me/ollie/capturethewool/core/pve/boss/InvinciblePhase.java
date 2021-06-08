@@ -1,6 +1,7 @@
 package me.ollie.capturethewool.core.pve.boss;
 
 import me.ollie.capturethewool.core.ability.Ability;
+import me.ollie.capturethewool.core.pve.Enemy;
 import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
 import me.ollie.capturethewool.core.pve.boss.phase.Phase;
 import org.bukkit.entity.LivingEntity;
@@ -8,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InvinciblePhase implements Phase {
 
@@ -15,8 +17,8 @@ public class InvinciblePhase implements Phase {
 
     private final Map<AbilityTriggerReason, Ability> abilities;
 
-    public InvinciblePhase(Collection<? extends LivingEntity> entities) {
-        this(new EndCondition.EnemiesDead(entities), Collections.emptyMap());
+    public InvinciblePhase(Collection<? extends Enemy<?>> entities) {
+        this(new EndCondition.EnemiesDead(entities.stream().map(Enemy::getEntity).collect(Collectors.toList())), Collections.emptyMap());
     }
 
     public InvinciblePhase(EndCondition condition, Map<AbilityTriggerReason, Ability> abilities) {

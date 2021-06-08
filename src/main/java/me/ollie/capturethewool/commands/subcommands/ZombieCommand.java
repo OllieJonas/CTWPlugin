@@ -3,6 +3,7 @@ package me.ollie.capturethewool.commands.subcommands;
 import me.ollie.capturethewool.CaptureTheWool;
 import me.ollie.capturethewool.core.bossbar.MobBossBar;
 import me.ollie.capturethewool.core.command.SubCommand;
+import me.ollie.capturethewool.core.pve.animation.RiseFromGroundSpawnAnimation;
 import me.ollie.capturethewool.core.util.HealthDisplay;
 import me.ollie.capturethewool.enemy.PowerfulZombie;
 import net.kyori.adventure.bossbar.BossBar;
@@ -20,7 +21,6 @@ public class ZombieCommand extends SubCommand {
     @Override
     public void execute(Player player, String aliasUsed, List<String> args) {
         PowerfulZombie zombie = new PowerfulZombie();
-        Zombie z = zombie.spawn(player.getLocation());
-        MobBossBar bossBar = new MobBossBar(CaptureTheWool.getInstance(), z, BossBar.Color.GREEN, new HashSet<>(List.of(player)));
+        Zombie z = zombie.spawn(player.getLocation(), new RiseFromGroundSpawnAnimation());
     }
 }

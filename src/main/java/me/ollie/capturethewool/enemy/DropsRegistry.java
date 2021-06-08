@@ -15,6 +15,7 @@ public class DropsRegistry {
 
     private static final DroppedItemHologram.OnPickup EXOTIC_PICKUP_NOTIFICATION = (p, i) -> Bukkit.getOnlinePlayers().forEach(p1 -> p1.sendMessage(ChatColor.AQUA + p.getDisplayName() + " has found " + ItemStackUtil.getName(i) + "!"));
 
+    public static final EnemyDrops NONE = EnemyDrops.builder().build();
     public static final EnemyDrops BOSS_DROPS = EnemyDrops.builder()
             .drop(1.0F, new EnemyDrops.Unique(
                     CurrencyRegistry.EXOTIC_CURRENCY::itemRepresentation,

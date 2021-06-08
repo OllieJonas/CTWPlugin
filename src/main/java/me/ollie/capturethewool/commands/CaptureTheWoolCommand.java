@@ -28,5 +28,6 @@ public class CaptureTheWoolCommand extends RootCommand {
         addSubCommand(new KeyCommand());
         addSubCommand(new ExplosionCommand());
         addSubCommand(new CannonCommand());
+        addSubCommand(new EntityRiseGroundCommand());
     }
 }

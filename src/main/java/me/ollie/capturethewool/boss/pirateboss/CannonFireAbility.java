@@ -1,4 +1,4 @@
-package me.ollie.capturethewool.boss.abilities.powerful;
+package me.ollie.capturethewool.boss.pirateboss;
 
 import me.ollie.capturethewool.CaptureTheWool;
 import me.ollie.capturethewool.core.ability.Ability;
@@ -20,7 +20,7 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class CannonFire extends Ability {
+public class CannonFireAbility extends Ability {
 
     private static final World COAST = Bukkit.getWorld("coast");
 
@@ -37,7 +37,7 @@ public class CannonFire extends Ability {
 
     private final List<Location> locations;
 
-    public CannonFire(List<Location> locations) {
+    public CannonFireAbility(List<Location> locations) {
         this.locations = locations;
     }
 

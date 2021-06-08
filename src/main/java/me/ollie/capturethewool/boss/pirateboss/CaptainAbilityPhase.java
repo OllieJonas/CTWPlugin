@@ -1,6 +1,5 @@
 package me.ollie.capturethewool.boss.pirateboss;
 
-import me.ollie.capturethewool.boss.abilities.powerful.CannonFire;
 import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.pve.boss.AbilityTriggerReason;
 import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
@@ -9,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public class CaptainAbilityPhase implements Phase {
 
     @Override
     public Map<AbilityTriggerReason, Ability> abilitySet() {
-        return Map.of(AbilityTriggerReason.RANDOM_DURATION, new CannonFire(CANNON_LOCATIONS));
+        return Map.of(AbilityTriggerReason.RANDOM_DURATION, new CannonFireAbility(CANNON_LOCATIONS));
     }
 
     @Override

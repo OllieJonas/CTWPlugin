@@ -1,6 +1,7 @@
 package me.ollie.capturethewool.commands.subcommands;
 
 import me.ollie.capturethewool.boss.abilities.powerful.SkeletalHorseWave;
+import me.ollie.capturethewool.boss.pirateboss.PirateCrewAbility;
 import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.command.SubCommand;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class AbilityCommand extends SubCommand {
 
     @Override
     public void execute(Player player, String aliasUsed, List<String> args) {
-        Ability ability = new SkeletalHorseWave();
+        Ability ability = new PirateCrewAbility();
         ability.power(player);
     }
 }
