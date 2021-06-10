@@ -1,8 +1,12 @@
 package me.ollie.capturethewool.core.pve.boss;
 
 import lombok.Getter;
+import me.ollie.capturethewool.core.util.HealthDisplay;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.ChatColor;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Getter
 public enum Colour {
@@ -24,5 +28,12 @@ public enum Colour {
         this.name = name;
         this.bossBarColour = bossBarColour;
         this.chatColour = chatColour;
+    }
+
+    public String getTeamName(String bossName) {
+        return Arrays.stream(ChatColor.stripColor(HealthDisplay.removeHealth(bossName)).split(" "))
+                .map(s -> s.charAt(0))
+                .map(Object::toString)
+                .collect(Collectors.joining()) + "-" + name;
     }
 }

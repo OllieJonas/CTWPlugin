@@ -42,7 +42,7 @@ public class VectorCircle extends BukkitRunnable {
 
         Vector perpendicular = rotateVectorAboutAxis(getLocation().clone().toVector(), axis.clone(), theta);
 
-        drawVector(Particle.VILLAGER_HAPPY, entity.getLocation(), perpendicular);
+        // drawVector(Particle.VILLAGER_HAPPY, entity.getLocation(), perpendicular);
 
         // figures out location
         Location loc = getLocation().clone().add(perpendicular.clone().normalize().multiply(radius));

@@ -47,7 +47,8 @@ public interface Damage {
              * this is supposed to be scaling based on distance (eg. someone at the edge of the radius takes less
              * damage than the person right next to it).
              *
-             * I cba to expand any further than this, but seems useful so I've left the option in if required.
+             * I cba to expand any further than this (I'm mainly using CONSTANT anyways for CTW),
+             * but seems useful so I've left the option in if required.
              */
             public enum ScalingType {
                 LINEAR,

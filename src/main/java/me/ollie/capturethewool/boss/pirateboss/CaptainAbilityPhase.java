@@ -1,7 +1,7 @@
 package me.ollie.capturethewool.boss.pirateboss;
 
-import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.pve.boss.AbilityTriggerReason;
+import me.ollie.capturethewool.core.pve.boss.BossAbility;
 import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
 import me.ollie.capturethewool.core.pve.boss.phase.Phase;
 import org.bukkit.Bukkit;
@@ -32,8 +32,8 @@ public class CaptainAbilityPhase implements Phase {
     }
 
     @Override
-    public Map<AbilityTriggerReason, Ability> abilitySet() {
-        return Map.of(AbilityTriggerReason.RANDOM_DURATION, new CannonFireAbility(CANNON_LOCATIONS));
+    public Map<AbilityTriggerReason, BossAbility> abilitySet() {
+        return Map.of(AbilityTriggerReason.RANDOM_DURATION, new BossAbility(new CannonFireAbility(CANNON_LOCATIONS), 1000L, List.of("Rain fire! \n But sire, our troops! \nJust do it!")));
     }
 
     @Override
@@ -43,6 +43,6 @@ public class CaptainAbilityPhase implements Phase {
 
     @Override
     public void onFinish() {
-
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("captain ability has finished"));
     }
 }

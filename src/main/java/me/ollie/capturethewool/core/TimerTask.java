@@ -1,4 +1,4 @@
-package me.ollie.capturethewool.core.cooldown;
+package me.ollie.capturethewool.core;
 
 import lombok.Getter;
 

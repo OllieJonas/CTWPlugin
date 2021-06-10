@@ -1,7 +1,7 @@
 package me.ollie.capturethewool.core.cooldown.progress;
 
 import lombok.Getter;
-import me.ollie.capturethewool.core.cooldown.TimerTask;
+import me.ollie.capturethewool.core.TimerTask;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -15,5 +15,6 @@ public class BossCommand extends SubCommand {
     @Override
     public void execute(Player player, String aliasUsed, List<String> args) {
         TheCaptain captain = new TheCaptain();
+        captain.spawn(TheCaptain.SPAWN);
     }
 }

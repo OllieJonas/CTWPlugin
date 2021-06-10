@@ -114,7 +114,6 @@ public class DroppedItemHologram {
     }
 
     private Hologram buildPickupHologram() {
-        System.out.println("here");
         return new HologramBuilder(plugin, location)
                 .isVisibleByDefault(false)
                 .visibleTo(audience)

@@ -29,6 +29,10 @@ public abstract class Enemy<T extends LivingEntity> {
 
     private static final Map<Integer, Enemy<?>> idToEnemyMap = new HashMap<>();
 
+    public static Enemy<?> get(LivingEntity entity) {
+        return idToEnemyMap.get(entity.getEntityId());
+    }
+
     protected static final JavaPlugin PLUGIN = GamesCore.getInstance().getPlugin();
 
     protected final Class<T> entityClazz;
@@ -89,6 +93,10 @@ public abstract class Enemy<T extends LivingEntity> {
             if (animation != null) animation.play(entity);
         }
         return entity;
+    }
+
+    public double getMaxHealth() {
+        return entity != null ? Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() : 0.0D;
     }
 
     public abstract void transformer(T enemy);

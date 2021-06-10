@@ -5,14 +5,12 @@ import me.ollie.capturethewool.core.GamesCore;
 import me.ollie.capturethewool.core.cooldown.progress.ItemProgressBarEvent;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBar;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBarManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.ollie.capturethewool.core.TimerTask;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Getter
@@ -23,18 +21,12 @@ public class CooldownManager {
 
     private final JavaPlugin plugin;
 
-    private final TimerTask timerTask;
-
-    private final int timerTaskId;
-
     private final Map<Player, Map<CooldownType, List<CooldownState>>> states;
 
     private final Map<ReducedItemStack, ItemCooldownContext> itemCooldownLabels;
 
     public CooldownManager(GamesCore core) {
         this.plugin = core.getPlugin();
-        this.timerTask = new TimerTask();
-        this.timerTaskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(core.getPlugin(), timerTask, 0L, 2L);
         this.states = new HashMap<>();
         this.itemCooldownLabels = new HashMap<>();
 
@@ -83,12 +75,8 @@ public class CooldownManager {
         return false;
     }
 
-    public void destroy() {
-        Bukkit.getScheduler().cancelTask(timerTaskId);
-    }
-
     public long getCounter() {
-        return timerTask.getCounter();
+        return GamesCore.getInstance().getCounter();
     }
 
     public void register(ItemStack item, String label, CooldownType type, float duration) {

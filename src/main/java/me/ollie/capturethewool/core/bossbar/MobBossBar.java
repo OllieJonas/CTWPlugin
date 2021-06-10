@@ -86,7 +86,6 @@ public class MobBossBar {
 
 
         this.currentHealth = MathsUtil.round(entity.getHealth() - damage, 1);
-        audience.forEach(p -> p.sendMessage("" + currentHealth));
 
         bossBar.progress(Math.max(0, (float) (currentHealth / maxHealth)));
     }

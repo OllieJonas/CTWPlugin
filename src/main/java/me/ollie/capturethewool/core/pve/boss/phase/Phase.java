@@ -2,6 +2,7 @@ package me.ollie.capturethewool.core.pve.boss.phase;
 
 import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.pve.boss.AbilityTriggerReason;
+import me.ollie.capturethewool.core.pve.boss.BossAbility;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +12,7 @@ public interface Phase {
 
     void onStart();
 
-    Map<AbilityTriggerReason, Ability> abilitySet();
+    Map<AbilityTriggerReason, BossAbility> abilitySet();
 
     EndCondition endCondition();
 

@@ -1,35 +1,39 @@
 package me.ollie.capturethewool.boss.pirateboss;
 
-import me.ollie.capturethewool.core.pve.Enemy;
-import me.ollie.capturethewool.core.pve.EnemyDrops;
 import me.ollie.capturethewool.core.pve.Modifier;
+import me.ollie.capturethewool.core.pve.animation.RiseFromGroundSpawnAnimation;
 import me.ollie.capturethewool.core.pve.boss.Boss;
 import me.ollie.capturethewool.core.pve.boss.Colour;
+import me.ollie.capturethewool.core.pve.boss.InvinciblePhase;
 import me.ollie.capturethewool.core.pve.boss.PhaseList;
-import me.ollie.capturethewool.core.pve.boss.phase.Phase;
 import me.ollie.capturethewool.enemy.DropsRegistry;
-import net.kyori.adventure.bossbar.BossBar;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Skeleton;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TheCaptain extends Boss<Skeleton> {
 
-    private static final Location SPAWN = new Location(Bukkit.getWorld("coast"), 1264.5, 122.5, 1564.5);
+    public static final Location SPAWN = new Location(Bukkit.getWorld("coast"), 1264.5, 122.5, 1564.5);
 
     public TheCaptain() {
-        super(new Enemy(), Colour.YELLOW, SPAWN);
+        super(new Enemy(), Colour.YELLOW);
+        PLUGIN.getServer().getPluginManager().registerEvents(new Listener(), PLUGIN);
     }
 
     @Override
     public Supplier<PhaseList> phases() {
-        return null;
+        return () -> new PhaseList()
+                .add(new CaptainAbilityPhase())
+                .add(new InvinciblePhase(this, IntStream.range(0, 3).boxed().map(i -> new PirateCrewEnemy()).collect(Collectors.toList()), new RiseFromGroundSpawnAnimation()))
+                .add(new CaptainAbilityPhase());
     }
 
 
@@ -46,5 +50,9 @@ public class TheCaptain extends Boss<Skeleton> {
         public void transformer(Skeleton enemy) {
             enemy.setShouldBurnInDay(false);
         }
+    }
+
+    private static class Listener implements org.bukkit.event.Listener {
+
     }
 }

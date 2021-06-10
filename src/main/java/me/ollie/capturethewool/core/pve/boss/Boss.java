@@ -1,26 +1,38 @@
 package me.ollie.capturethewool.core.pve.boss;
 
+import lombok.Getter;
 import me.ollie.capturethewool.core.GamesCore;
 import me.ollie.capturethewool.core.bossbar.MobBossBar;
 import me.ollie.capturethewool.core.pve.Enemy;
+import me.ollie.capturethewool.core.pve.animation.SpawnAnimation;
+import me.ollie.capturethewool.core.pve.boss.events.BossDamageByPlayerEvent;
+import me.ollie.capturethewool.core.pve.boss.events.BossDeathEvent;
+import me.ollie.capturethewool.core.pve.boss.events.BossEventsAdapter;
+import me.ollie.capturethewool.core.pve.boss.events.BossMinionDeathEvent;
+import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
+import me.ollie.capturethewool.core.pve.boss.phase.Phase;
+import me.ollie.capturethewool.core.util.HealthDisplay;
 import me.ollie.capturethewool.enemy.DropsRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.*;
 import java.util.function.Supplier;
 
+@Getter
 public abstract class Boss<T extends LivingEntity>  {
 
     protected static final JavaPlugin PLUGIN = GamesCore.getInstance().getPlugin();
 
-    protected Enemy<T> enemy;
-
-    protected T entity;
+    protected final Enemy<T> enemy;
 
     protected final Colour colour;
 
@@ -28,29 +40,53 @@ public abstract class Boss<T extends LivingEntity>  {
 
     protected final PhaseList phases;
 
-    public Boss(Enemy<T> enemy, Colour colour, Location location) {
+    protected Phase currPhase;
+
+    public Boss(Enemy<T> enemy, Colour colour) {
         this.enemy = enemy;
         this.colour = colour;
-
-        this.entity = create(location);
         this.phases = phases().get();
     }
 
-    private T create(Location location) {
+    public T spawn(Location location) {
+        return spawn(location, null);
+    }
+
+    public T spawn(Location location, SpawnAnimation animation) {
         enemy.setDrops(DropsRegistry.BOSS_DROPS);
-        T entity = enemy.spawn(location);
+        T entity = enemy.spawn(location, animation);
         bossBar = new MobBossBar(PLUGIN, entity, colour.getBossBarColour(), location.getNearbyPlayers(32));
-        setGlowing(entity, colour.getChatColour());
+        setGlowing(entity, colour);
+        this.currPhase = phases.peek();
+        BossManager.getInstance().put(entity, this);
+
         return entity;
+    }
+
+    public <E extends Enemy<?>> E spawnMinion(E enemy, Location location, SpawnAnimation animation) {
+        enemy.spawn(location, animation);
+        BossManager.getInstance().registerAssociated(enemy, this);
+        return enemy;
     }
 
     public abstract Supplier<PhaseList> phases();
 
-    private void setGlowing(T entity, ChatColor colour) {
+    public void nextPhase() {
+        currPhase.onFinish();
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("curr: " + currPhase.getClass().getSimpleName()));
+
+        Phase next = phases.next();
+        next.onStart();
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("next: " + next.getClass().getSimpleName()));
+
+        currPhase = next;
+    }
+
+    private void setGlowing(T entity, Colour colour) {
         entity.setGlowing(true);
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
-        Team team = board.registerNewTeam(colour.name());
-        team.setColor(colour);
+        Team team = board.registerNewTeam(colour.getTeamName(entity.getCustomName()));
+        team.setColor(colour.getChatColour());
         team.addEntry(entity.getUniqueId().toString());
     }
 
