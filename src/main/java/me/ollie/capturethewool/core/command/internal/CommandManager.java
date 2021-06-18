@@ -1,6 +1,13 @@
 package me.ollie.capturethewool.core.command.internal;
 
-import me.ollie.capturethewool.core.command.ICommand;
+import me.ollie.capturethewool.core.command.IRootCommand;
+import me.ollie.capturethewool.core.command.internal.impl.CommandFinderImpl;
+import me.ollie.capturethewool.core.command.internal.impl.CommandInjectorImpl;
+import me.ollie.capturethewool.core.command.internal.impl.InternalRootCommandAdapterImpl;
+import me.ollie.capturethewool.core.command.internal.impl.InternalSubCommandAdapterImpl;
+import me.ollie.capturethewool.core.command.internal.interfaces.CommandFinder;
+import me.ollie.capturethewool.core.command.internal.interfaces.CommandInjector;
+import me.ollie.capturethewool.core.command.internal.interfaces.InternalRootCommandAdapter;
 import me.ollie.capturethewool.core.util.SetUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jooq.lambda.tuple.Tuple2;
@@ -13,6 +20,8 @@ import java.util.stream.Collectors;
 
 public class CommandManager {
 
+    private final JavaPlugin plugin;
+
     private final CommandFinder finder;
 
     private final InternalRootCommandAdapter adapter;
@@ -22,13 +31,15 @@ public class CommandManager {
     private final Map<String, InternalRootCommand> commands;
 
     public CommandManager(JavaPlugin plugin) {
+        this.plugin = plugin;
         this.finder = new CommandFinderImpl(plugin);
         this.adapter = new InternalRootCommandAdapterImpl(finder, new InternalSubCommandAdapterImpl());
         this.injector = new CommandInjectorImpl();
         this.commands = new HashMap<>();
     }
 
-    public CommandManager(CommandFinder finder, InternalRootCommandAdapter adapter, CommandInjector injector) {
+    public CommandManager(JavaPlugin plugin, CommandFinder finder, InternalRootCommandAdapter adapter, CommandInjector injector) {
+        this.plugin = plugin;
         this.finder = finder;
         this.adapter = adapter;
         this.injector = injector;
@@ -36,10 +47,11 @@ public class CommandManager {
     }
 
     public void init() {
-        Collection<Class<? extends ICommand>> rootClasses = finder.findRoots();
-        Collection<ICommand> roots = rootClasses.stream().map(CommandUtils::newInstance).collect(Collectors.toUnmodifiableSet());
+        Collection<Class<? extends IRootCommand>> rootClasses = finder.findRoots();
+        Collection<IRootCommand> roots = rootClasses.stream().map(CommandUtils::newInstance).collect(Collectors.toUnmodifiableSet());
+        System.out.println("roots: " + roots.stream().map(r -> r.getClass().getSimpleName()).collect(Collectors.joining(", ")));
         Collection<InternalRootCommand> internalRoots = roots.stream().map(adapter::adapt).collect(Collectors.toUnmodifiableSet());
-        injector.inject(internalRoots);
+        injector.inject(plugin.getDescription().getName(), internalRoots);
 
         Map<String, InternalRootCommand> map = internalRoots.stream()
                 .map(i -> new Tuple2<>(SetUtils.union(Set.of(i.getName()), Set.copyOf(i.getAliases())), i)) // map to pair

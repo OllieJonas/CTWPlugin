@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.core.command.annotations;
 
-import me.ollie.capturethewool.core.command.ICommand;
+import me.ollie.capturethewool.core.command.IRootCommand;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SubCommand {
 
-    Class<? extends ICommand>[] root();
+    Class<? extends IRootCommand>[] root();
 
     String name();
 }

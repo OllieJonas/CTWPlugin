@@ -2,7 +2,7 @@ package me.ollie.capturethewool.core.command.internal;
 
 import lombok.Builder;
 import lombok.Getter;
-import me.ollie.capturethewool.core.command.ICommand;
+import me.ollie.capturethewool.core.command.ISubCommand;
 
 import java.util.List;
 
@@ -23,5 +23,9 @@ public class InternalSubCommand {
 
     private final List<String> aliases;
 
-    private final ICommand command;
+    private final ISubCommand command;
+
+    private final boolean hideFromHelp;
+
+    private final boolean hideFromUsage;
 }

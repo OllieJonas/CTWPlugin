@@ -1,20 +1,18 @@
 package me.ollie.capturethewool.commands.subcommands;
 
 import me.ollie.capturethewool.core.command.AllCommands;
-import me.ollie.capturethewool.core.command.ICommand;
-import me.ollie.capturethewool.core.command.annotations.CommandAliases;
-import me.ollie.capturethewool.core.command.annotations.OpCommand;
+import me.ollie.capturethewool.core.command.ISubCommand;
+import me.ollie.capturethewool.core.command.annotations.OperatorCommand;
 import me.ollie.capturethewool.core.command.annotations.SubCommand;
+import me.ollie.capturethewool.core.command.internal.context.SubCommandContext;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 @SubCommand(name = "allcommandstest", root = AllCommands.class)
-@OpCommand
-public class AllCommandsTest implements ICommand {
+@OperatorCommand
+public class AllCommandsTest implements ISubCommand {
 
     @Override
-    public void execute(Player player, List<String> args) {
-        player.sendMessage("waddup");
+    public void execute(Player player, SubCommandContext context) {
+
     }
 }
