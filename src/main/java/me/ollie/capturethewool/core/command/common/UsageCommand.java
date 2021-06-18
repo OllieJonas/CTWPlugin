@@ -10,6 +10,10 @@ import me.ollie.capturethewool.core.command.internal.context.SubCommandContext;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +26,8 @@ import java.util.List;
 )
 public class UsageCommand implements ISubCommand {
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
     public @interface Exclude {}
 
     private static final String BORDER = "-";
@@ -73,6 +79,6 @@ public class UsageCommand implements ISubCommand {
 
     private String buildHeader(String commandName) {
         String border = BORDER_COLOUR + BORDER.repeat(10);
-        return border + USAGE_COLOUR + "Usage for /" + commandName + " " + border;
+        return border + USAGE_COLOUR + " Usage for /" + commandName + " " + border;
     }
 }

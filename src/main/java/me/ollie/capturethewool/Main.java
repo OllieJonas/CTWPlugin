@@ -3,13 +3,13 @@ package me.ollie.capturethewool;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
-import me.ollie.capturethewool.commands.CaptureTheWoolCommand;
 import me.ollie.capturethewool.core.GamesCore;
 import me.ollie.capturethewool.core.hologram.PaginatedHologram;
 import me.ollie.capturethewool.core.hologram.PaginatedHologramBuilder;
 import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
 import me.ollie.capturethewool.core.npc.InteractableVillager;
 import me.ollie.capturethewool.core.pve.DisableSpawners;
+import me.ollie.capturethewool.core.world.ConstantTime;
 import me.ollie.capturethewool.game.CaptureTheWool;
 import me.ollie.capturethewool.game.key.KeyListener;
 import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
@@ -43,6 +43,12 @@ public class Main extends JavaPlugin {
 
         this.gamesCore.getHolographicDamageListener().toggle();
         gamesCore.setSpecialProjectileRegistry(new CTWProjectileRegistry().getRegistry());
+
+        gamesCore.getConstantTime().set(Bukkit.getWorld("world"), ConstantTime.Time.MIDDAY);
+        gamesCore.getConstantTime().set(Bukkit.getWorld("Capture_the_Wool"), ConstantTime.Time.NIGHT);
+        gamesCore.getConstantWeather().setAll(WeatherType.CLEAR);
+
+        gamesCore.init();
 
         // information hologram loc
         Location informationHologramLoc = new Location(Bukkit.getWorld("world"), 488.5, 7.5, 72.5);
@@ -92,6 +98,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        gamesCore.onDisable();
         InteractableVillager.destroyAll();
     }
 }

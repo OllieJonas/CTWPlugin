@@ -14,9 +14,10 @@ import me.ollie.capturethewool.core.projectile.SimpleProjectileSelectionStrategy
 import me.ollie.capturethewool.core.projectile.SpecialArrowListener;
 import me.ollie.capturethewool.core.projectile.SpecialProjectileRegistry;
 import me.ollie.capturethewool.core.pve.boss.BossManager;
+import me.ollie.capturethewool.core.world.ConstantTime;
+import me.ollie.capturethewool.core.world.ConstantWeather;
 import me.ollie.capturethewool.core.util.HealthDisplay;
 import me.ollie.capturethewool.core.util.HolographicDamageListener;
-import net.bytebuddy.build.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,6 +43,10 @@ public class GamesCore {
 
     private SpecialArrowListener specialArrowListener;
 
+    private final ConstantTime constantTime;
+
+    private final ConstantWeather constantWeather;
+
     public GamesCore(JavaPlugin plugin, ProtocolManager manager) {
         this.plugin = plugin;
         this.protocolManager = manager;
@@ -59,12 +64,22 @@ public class GamesCore {
         new BossManager(plugin);
         new HealthDisplay(plugin);
 
+        this.constantTime = new ConstantTime(plugin);
+        this.constantWeather = new ConstantWeather(plugin);
+
         registerEvents();
 
         instance = this;
     }
 
+    public void init() {
+        constantTime.start();
+        constantWeather.start();
+    }
 
+    public void onDisable() {
+        constantTime.cancel();
+    }
 
     private void registerEvents() {
         PluginManager manager = plugin.getServer().getPluginManager();
