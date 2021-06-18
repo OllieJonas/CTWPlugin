@@ -27,6 +27,10 @@ public class CommandUtils {
         return clazz.getConstructor().newInstance();
     }
 
+    public static boolean hasPermission(CommandSender sender, InternalSubCommand command) {
+        return hasPermission(sender, command.getPermission(), command.isRequiresOp());
+    }
+
     public static boolean hasPermission(CommandSender sender, String permission, boolean requiresOp) {
         return sender.isOp() ||
                 ((!sender.isOp() && !requiresOp) &&

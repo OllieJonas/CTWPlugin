@@ -3,6 +3,7 @@ package me.ollie.capturethewool.core.command.internal.impl;
 import me.ollie.capturethewool.core.command.ISubCommand;
 import me.ollie.capturethewool.core.command.annotations.*;
 import me.ollie.capturethewool.core.command.common.HelpCommand;
+import me.ollie.capturethewool.core.command.common.UsageCommand;
 import me.ollie.capturethewool.core.command.internal.InternalSubCommand;
 import me.ollie.capturethewool.core.command.internal.interfaces.InternalSubCommandAdapter;
 
@@ -46,6 +47,10 @@ public class InternalSubCommandAdapterImpl implements InternalSubCommandAdapter 
         // hide from help
         boolean hideFromHelp = getAnnotation(clazz, HelpCommand.Exclude.class).isPresent();
         builder.hideFromHelp(hideFromHelp);
+
+        // hide from usage
+        boolean hideFromUsage = getAnnotation(clazz, UsageCommand.Exclude.class).isPresent();
+        builder.hideFromUsage(hideFromUsage);
 
         // command
         builder.command(command);

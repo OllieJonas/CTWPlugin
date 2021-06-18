@@ -18,10 +18,19 @@ import java.lang.annotation.Target;
 import java.util.*;
 
 @SubCommand(name = "help", root = AllCommands.class)
-@CommandPermissions("olscore.help")
 @CommandInfo(
-        usage = "help <pageno>",
-        shortDescription = "List all subcommands for a given command"
+        usage = "<page number>",
+        shortDescription = "List all subcommands for a given command",
+        longDescription =
+                        """
+                        Lists all subcommands for a given root command.\s
+
+                        This will only show commands you have access to.
+                                        
+                        If you are an operator, any commands that are operator only will be highlighted in red
+                        and will appear first in the list, in alphabetical order. Any other commands will also appear in
+                        alphabetical order.
+                        """
 )
 public class HelpCommand implements ISubCommand {
 
@@ -29,7 +38,7 @@ public class HelpCommand implements ISubCommand {
     @Target(ElementType.TYPE)
     public @interface Exclude {}
 
-    private static final int PAGE_SIZE = 2;
+    private static final int PAGE_SIZE = 7;
 
     private static final String BORDER = "-";
 
@@ -37,35 +46,40 @@ public class HelpCommand implements ISubCommand {
 
     private static final ChatColor HELP_COLOUR = ChatColor.AQUA;
 
+    private static final Comparator<Map.Entry<String, InternalSubCommand>> COMPARATOR = (o1, o2) -> {
+        int boolComparison = Boolean.compare(o1.getValue().isRequiresOp(), o2.getValue().isRequiresOp());
+        if (boolComparison != 0) return -boolComparison;
+        return o1.getValue().getName().compareTo(o2.getValue().getName());
+    };
+
 
     @Override
     public void execute(Player player, SubCommandContext context) {
         List<String> args = context.args();
-        int size = context.parent().getSubCommands().size();
-        int maxPages = size / PAGE_SIZE + 1;
-
-        int page = args.size() == 0 ? 1 : getPageFrom(args.get(0), player, maxPages);
-
-        if (page == -1) return;
-
-        Map<String, InternalSubCommand> commandMap = new TreeMap<>(context.parent().getSubCommands());
 
         Set<String> alreadyFoundCommands = new HashSet<>(); // internal
 
-        List<Map.Entry<String, InternalSubCommand>> validCommands = commandMap.entrySet().stream()
-                .filter(e -> !alreadyFoundCommands.contains(e.getValue().getName()))
-                .filter(e -> !e.getValue().isHideFromHelp())
-                .peek(e -> alreadyFoundCommands.add(e.getValue().getName()))
-                .filter(e -> CommandUtils.hasPermission(player, e.getValue().getPermission(), e.getValue().isRequiresOp())) // no permission
+        List<Map.Entry<String, InternalSubCommand>> validCommands = context.parent().getSubCommands().entrySet().stream()
+                .filter(e -> !alreadyFoundCommands.contains(e.getValue().getName())) // remove duplicates
+                .filter(e -> !e.getValue().isHideFromHelp()) // remove those hidden from help
+                .peek(e -> alreadyFoundCommands.add(e.getValue().getName())) // add to duplicate set
+                .filter(e -> CommandUtils.hasPermission(player, e.getValue())) // do they have permission?
+                .sorted(COMPARATOR)
                 .toList();
 
-        int from = (page - 1) * PAGE_SIZE;
+        int size = validCommands.size();
+        int maxPages = size / PAGE_SIZE + (size >= PAGE_SIZE ? 0 : 1);
+
+        int page = args.size() == 0 ? 1 : getPageFrom(args.get(0), player, maxPages);
+        if (page == -1) return;
+
+        int from = Math.min(size - 1, (page - 1) * PAGE_SIZE);
         int to = Math.min(size - 1, from + PAGE_SIZE);
 
         List<Map.Entry<String, InternalSubCommand>> window = validCommands.subList(from, to);
 
         player.sendMessage(buildHeader(context.rootCommandAlias(), page, maxPages));
-        window.forEach(e -> player.sendMessage(ChatColor.DARK_AQUA + "/" + e.getValue().getName() + ChatColor.DARK_GRAY + " - " + ChatColor.AQUA + e.getValue().getDescription()));
+        window.forEach(e -> player.sendMessage((e.getValue().isRequiresOp() ? ChatColor.RED : ChatColor.DARK_AQUA) + "/" + e.getValue().getName() + ChatColor.DARK_GRAY + " - " + ChatColor.AQUA + e.getValue().getDescription()));
         // player.sendMessage(buildFooter());
     }
 
