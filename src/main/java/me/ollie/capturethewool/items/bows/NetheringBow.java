@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.items.bows;
 
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.cooldown.CooldownType;
 import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
 import me.ollie.capturethewool.core.util.particles.Circle;
@@ -10,14 +10,11 @@ import me.ollie.capturethewool.items.types.PowerfulBow;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
 
 public class NetheringBow extends PowerfulBow {
 
@@ -37,7 +34,7 @@ public class NetheringBow extends PowerfulBow {
         arrow.getNearbyEntities(5, 5, 5).stream().filter(e -> e instanceof LivingEntity).map(e -> (LivingEntity) e).forEach(e -> e.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 7 * 20, 0)));
         Location location = arrow.getLocation();
 
-        ActionOnEnterVortex vortex = new ActionOnEnterVortex(CaptureTheWool.getInstance(),
+        ActionOnEnterVortex vortex = new ActionOnEnterVortex(Main.getInstance(),
                 Particle.PORTAL,
                 location.clone().subtract(0, 1, 0),
                 5,
@@ -49,9 +46,9 @@ public class NetheringBow extends PowerfulBow {
         vortex.setDescending(true);
         vortex.run();
         Circle circle = new Circle(Particle.PORTAL, location, 5, 0.5F);
-        circle.runTaskTimer(CaptureTheWool.getInstance(), 0L, 10L);
+        circle.runTaskTimer(Main.getInstance(), 0L, 10L);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheWool.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             vortex.destroy();
             circle.cancel();
         }, 10 * 20);

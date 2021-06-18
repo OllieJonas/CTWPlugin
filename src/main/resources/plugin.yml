@@ -1,6 +1,6 @@
 name: CTW
 version: ${project.version}
-main: me.ollie.capturethewool.CaptureTheWool
+main: me.ollie.capturethewool.Main
 api-version: 1.16
 authors:
   - Ollie
@@ -9,6 +9,3 @@ depend:
   - ProtocolLib
   - Citizens
 description: Capture the Wool from Bleb.io
-commands:
-  ctw:
-    description: fun times :)

@@ -4,23 +4,23 @@ import lombok.Getter;
 import me.ollie.capturethewool.core.game.AbstractGame;
 import me.ollie.capturethewool.core.map.AbstractGameMap;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LobbyManager {
 
+    public record LobbyInfo(Class<? extends AbstractGame> game, int lobby) {}
+
     @Getter
     private static LobbyManager instance;
 
-    @Getter
-    private final Map<Integer, Lobby> lobbies;
+    private Map<UUID, LobbyInfo> players;
 
-    private Map<UUID, Integer> players;
+    private final Map<Class<? extends AbstractGame>, Map<Integer, Lobby>> lobbies;
 
     private int noLobbies;
 
@@ -28,42 +28,54 @@ public class LobbyManager {
 
     public LobbyManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.lobbies = new HashMap<>();
         this.players = new HashMap<>();
+        this.lobbies = new HashMap<>();
 
         instance = this;
     }
 
-    public void createLobby(AbstractGame game, AbstractGameMap map, boolean requiresForceStart) {
-        lobbies.put(noLobbies++, new Lobby(plugin, game, map, requiresForceStart));
+    public Map<Integer, Lobby> getAllLobbies(Class<? extends AbstractGame> clazz) {
+        return lobbies.get(clazz);
     }
 
-    public void removeLobby(int lobby) {
-        lobbies.remove(lobby);
-        this.players = players.entrySet().stream().filter(e -> e.getValue() != lobby).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public void createLobby(AbstractGame clazz, AbstractGameMap map, Location lobbyLocation) {
+        lobbies.computeIfAbsent(clazz.getClass(), k -> new HashMap<>());
+        lobbies.get(clazz.getClass()).put(noLobbies++, new Lobby(plugin, clazz, map, lobbyLocation, false));
     }
 
-    public void joinLobby(Player player, int id) {
+    public void removeLobby(Class<? extends AbstractGame> clazz, int lobby) {
+        lobbies.get(clazz).remove(lobby);
 
+        this.players = players.entrySet().stream()
+                .filter(e -> e.getValue().game() != clazz)
+                .filter(e -> e.getValue().lobby() != lobby)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public void joinLobby(Class<? extends AbstractGame> clazz, Player player, int id) {
         if (isInLobby(player))
             leaveLobby(player);
 
-        System.out.println("Join Lobby ID: " + id);
-        players.put(player.getUniqueId(), id);
-        Lobby lobby = lobbies.get(id);
+        Lobby lobby = lobbies.get(clazz).get(id);
 
         if (lobby == null) {
             player.sendMessage(ChatColor.RED + "Can't find lobby! Attempted Lobby ID: " + id + ". Lobby IDs: " + lobbies.keySet().stream().map(String::valueOf).collect(Collectors.joining(", ")));
             return;
         }
 
+        players.put(player.getUniqueId(), new LobbyInfo(clazz, id));
         lobby.addPlayer(player);
+
+        if (players.size() > lobby.getGame().getConfiguration().minPlayersToStart()) {
+            lobby.gameStarting();
+        }
     }
+
 
     public void leaveLobby(Player player) {
 
-        int id = players.get(player.getUniqueId());
-        Lobby lobby = lobbies.get(id);
+        LobbyInfo id = players.get(player.getUniqueId());
+        Lobby lobby = lobbies.get(id.game()).get(id.lobby());
 
         if (lobby == null) {
             player.sendMessage(ChatColor.RED + "Can't find lobby!");
@@ -75,12 +87,13 @@ public class LobbyManager {
         lobby.removePlayer(player);
     }
 
-    public Lobby getLobbyFor(Player player) {
-        return lobbies.get(players.get(player.getUniqueId()));
+    public LobbyInfo getLobbyInfoFor(Player player) {
+        return players.get(player.getUniqueId());
     }
 
-    public int getLobbyIdFor(Player player) {
-        return players.get(player.getUniqueId());
+    public Lobby getLobbyFor(Player player) {
+        LobbyInfo info = getLobbyInfoFor(player);
+        return lobbies.get(info.game()).get(info.lobby());
     }
 
     public boolean isInLobby(Player player) {

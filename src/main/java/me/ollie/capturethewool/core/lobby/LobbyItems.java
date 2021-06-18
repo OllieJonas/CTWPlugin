@@ -34,7 +34,7 @@ public class LobbyItems implements Listener {
             .withLore(ChatColor.GRAY + "Right click to send a kitten to the shadow realm")
             .build();
 
-    public static void addItems(Player player, boolean selectKit) {
+    public static void addItems(Player player, boolean selectKit, boolean teamGame) {
         player.getInventory().setItem(0, KITTEN_CANNON_ITEM);
 
         if (selectKit)

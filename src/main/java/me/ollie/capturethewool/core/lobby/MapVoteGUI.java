@@ -39,7 +39,7 @@ public class MapVoteGUI {
                 AtomicInteger counter = new AtomicInteger(0);
                 mapVote.getTalley()
                         .forEach((map, talley) -> {
-                            GUIItem item = new GUIItem(
+                            GUIItem item = GUIItem.of(
                                     mapToItemFunction.apply(map, talley),
                                     (p, i) -> {
                                         mapVote.vote(p, map);

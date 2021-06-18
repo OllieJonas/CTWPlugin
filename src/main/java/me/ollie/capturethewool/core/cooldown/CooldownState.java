@@ -1,5 +1,7 @@
 package me.ollie.capturethewool.core.cooldown;
 
+import me.ollie.capturethewool.core.util.ReducedItemStack;
+
 import java.util.Objects;
 
 public record CooldownState(ReducedItemStack label, long startTime) {

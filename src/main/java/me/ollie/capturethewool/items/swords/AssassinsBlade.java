@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.items.swords;
 
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBar;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBarManager;
 import me.ollie.capturethewool.core.gui.GUIManager;
@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -55,11 +54,11 @@ public class AssassinsBlade extends PowerfulSword implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 15 * 20, 5));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 15 * 20, 0));
 
-        ProgressBar progressBar = new ProgressBar(CaptureTheWool.getInstance(), player, "Time Until Return", 15F).override(true).countUp(false).readyMessage(false);
+        ProgressBar progressBar = new ProgressBar(Main.getInstance(), player, "Time Until Return", 15F).override(true).countUp(false).readyMessage(false);
 
         ProgressBarManager.getInstance().addAndShow(player, progressBar);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheWool.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             Entity hitTarget = targets.get(player);
             if (hitTarget != null) {
                 hitTarget.sendMessage(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has returned now - you can rest easy.");

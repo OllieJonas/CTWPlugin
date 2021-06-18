@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.core.pve;
 
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.hologram.DroppedItemHologram;
 import me.ollie.capturethewool.core.util.CollectionUtil;
 import org.bukkit.entity.Entity;
@@ -16,7 +16,7 @@ public record EnemyDrops(List<ChanceDrop> drops) {
 
     private static final Random RANDOM = new Random();
 
-    private static final JavaPlugin PLUGIN = CaptureTheWool.getInstance();
+    private static final JavaPlugin PLUGIN = Main.getInstance();
 
     public List<DroppedItemHologram> drop(Entity entity) {
         return drop(entity, entity.getLocation().getNearbyPlayers(32));

@@ -14,13 +14,20 @@ public class CollectionUtil {
     }
 
     public static <T> Optional<T> random(Collection<T> collection, Predicate<T> predicate) {
+
+        if (collection == null || collection.isEmpty()) return Optional.empty();
+
         Collection<T> copy = new HashSet<>(collection);
         while (!copy.isEmpty()) {
-            T target = random(copy);
-            if (predicate.test(target)) {
-                return Optional.of(target);
-            } else {
-                copy.remove(target);
+            Optional<T> optional = randomOpt(copy);
+
+            if (optional.isPresent()) {
+                T target = optional.get();
+                if (predicate.test(target)) {
+                    return optional;
+                } else {
+                    copy.remove(target);
+                }
             }
         }
 
@@ -28,11 +35,17 @@ public class CollectionUtil {
     }
 
     public static <T> T random(Collection<T> collection) {
+        return randomOpt(collection).orElse(null);
+    }
+
+    public static <T> Optional<T> randomOpt(Collection<T> collection) {
+        if (collection == null || collection.isEmpty()) return Optional.empty();
+
         if (collection instanceof WeightedRandomSet<T> randomSet) {
-            return randomSet.getRandom();
+            return Optional.of(randomSet.getRandom());
         } else {
             List<T> list = new ArrayList<>(collection);
-            return list.get(RANDOM.nextInt(list.size()));
+            return Optional.of(list.get(RANDOM.nextInt(list.size())));
         }
     }
 }

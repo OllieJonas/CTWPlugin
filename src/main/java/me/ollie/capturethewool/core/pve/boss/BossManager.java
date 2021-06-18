@@ -79,9 +79,6 @@ public class BossManager {
     }
 
     private static class Listener implements org.bukkit.event.Listener {
-
-
-
         @EventHandler
         public void healthNextPhase(BossDamageByPlayerEvent event) {
 
@@ -122,7 +119,7 @@ public class BossManager {
         @EventHandler
         public void removeTeam(BossDeathEvent event) {
             Team team = Bukkit.getScoreboardManager().getMainScoreboard()
-                    .getTeam(event.getBoss().getColour().getTeamName(event.getBoss().getEnemy().getDisplayName()));
+                    .getTeam(event.getBoss().getColour().getTeamName(event.getBoss()));
             if (team != null) team.unregister();
         }
     }

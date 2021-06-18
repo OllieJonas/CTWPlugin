@@ -8,8 +8,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CaptainAbilityPhase implements Phase {
 
@@ -26,14 +28,21 @@ public class CaptainAbilityPhase implements Phase {
             new Location(COAST, 1251.5, 127, 1586.5)
     );
 
+    private final Map<AbilityTriggerReason, Collection<BossAbility>> abilities = Map.of(
+            AbilityTriggerReason.RANDOM_DURATION, Set.of(
+                    // new BossAbility(new CannonFireAbility(CANNON_LOCATIONS), 100L, List.of("Rain fire! \n But sire, our troops! \nJust do it!"))
+                    new BossAbility(null, 5L, List.of("I am an ability that has dun been called and stuff"))
+            )
+    );
+
     @Override
     public void onStart() {
 
     }
 
     @Override
-    public Map<AbilityTriggerReason, BossAbility> abilitySet() {
-        return Map.of(AbilityTriggerReason.RANDOM_DURATION, new BossAbility(new CannonFireAbility(CANNON_LOCATIONS), 1000L, List.of("Rain fire! \n But sire, our troops! \nJust do it!")));
+    public Map<AbilityTriggerReason, Collection<BossAbility>> abilitySet() {
+        return abilities;
     }
 
     @Override

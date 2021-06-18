@@ -65,6 +65,16 @@ public class ChestGUIUtils {
         return 2 * (original / 7) + original + 10;
     }
 
+    public static int shiftFromBorderPosition(int border) {
+        int borderMinusTen = border - 10;
+
+        int firstIteration = 2 * (borderMinusTen / 7);
+        int secondIteration = 2 * ((borderMinusTen - firstIteration) / 7);
+        int thirdIteration = 2 * ((borderMinusTen - secondIteration) / 7);
+
+        return borderMinusTen - thirdIteration;
+    }
+
     /**
      * Calculates the inventory size to use for Bukkit.createInventory() based on the maximum slots
      * required. Note this is capped at the maximum size of 54.

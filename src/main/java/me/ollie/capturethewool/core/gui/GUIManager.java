@@ -21,6 +21,8 @@ public class GUIManager {
 
 
     public void openGuiFor(Player player, GUI gui) {
+        gui.init();
+
         openedGuis.put(player.getUniqueId(), gui);
 
         if (!observers.containsKey(gui.getName()))

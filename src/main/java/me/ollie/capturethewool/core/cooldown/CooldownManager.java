@@ -6,6 +6,7 @@ import me.ollie.capturethewool.core.cooldown.progress.ItemProgressBarEvent;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBar;
 import me.ollie.capturethewool.core.cooldown.progress.ProgressBarManager;
 import me.ollie.capturethewool.core.TimerTask;
+import me.ollie.capturethewool.core.util.ReducedItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -61,8 +62,6 @@ public class CooldownManager {
             boolean equals = state.label().equals(reduced);
             boolean isExpired = TimerTask.isExpired(getCounter(), state.startTime(), context.duration());
 
-
-            System.out.println("st: " + state.label().name() + " eq: " + equals + " exp: " + isExpired);
             if (equals) {
                 if (isExpired) {
                     sts.remove(state);

@@ -1,7 +1,6 @@
 package me.ollie.capturethewool.core.pve.boss;
 
-import me.ollie.capturethewool.CaptureTheWool;
-import me.ollie.capturethewool.core.ability.Ability;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.pve.Enemy;
 import me.ollie.capturethewool.core.pve.animation.SpawnAnimation;
 import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
@@ -9,7 +8,6 @@ import me.ollie.capturethewool.core.pve.boss.phase.Phase;
 import me.ollie.capturethewool.core.util.LocationUtil;
 import me.ollie.capturethewool.core.util.VectorCircle;
 import me.ollie.capturethewool.core.util.stream.Permutations;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -19,6 +17,7 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class InvinciblePhase implements Phase {
@@ -29,7 +28,7 @@ public class InvinciblePhase implements Phase {
 
     private final SpawnAnimation animation;
 
-    private final Map<AbilityTriggerReason, BossAbility> abilities;
+    private final Map<AbilityTriggerReason, Collection<BossAbility>> abilities;
 
     private final Location teleport;
 
@@ -49,7 +48,7 @@ public class InvinciblePhase implements Phase {
         this(boss, new EndCondition.EnemiesDead(entities), animation, Collections.emptyMap(), teleport);
     }
 
-    public InvinciblePhase(Boss<?> boss, EndCondition.EnemiesDead condition, SpawnAnimation animation, Map<AbilityTriggerReason, BossAbility> abilities, Location teleport) {
+    public InvinciblePhase(Boss<?> boss, EndCondition.EnemiesDead condition, SpawnAnimation animation, Map<AbilityTriggerReason, Collection<BossAbility>> abilities, Location teleport) {
         this.boss = boss;
         this.condition = condition;
         this.animation = animation;
@@ -76,19 +75,21 @@ public class InvinciblePhase implements Phase {
                         l -> l.getWorld().spawnParticle(Particle.REDSTONE, l, 1,
                                 new Particle.DustOptions(Color.WHITE, 1))))
                 .collect(Collectors.toSet());
-        invincibleCircles.forEach(c -> c.runTaskTimer(CaptureTheWool.getInstance(), aLong.getAndAdd(2), 1L));
+        invincibleCircles.forEach(c -> c.runTaskTimer(Main.getInstance(), aLong.getAndAdd(2), 1L));
 
-        condition.entities().forEach(e -> e.spawn(LocationUtil.randomLocationAround(entity.getLocation(), 20), animation));
+        Supplier<Location> enemySupplier = () -> LocationUtil.randomLocationAround(entity.getLocation(), 20);
+        condition.entities().forEach(e -> boss.spawnMinion(e, enemySupplier.get(), animation));
 
         if (teleport != null) {
             prev = entity.getLocation();
             entity.teleport(teleport);
+            entity.setAI(false);
         }
 
     }
 
     @Override
-    public Map<AbilityTriggerReason, BossAbility> abilitySet() {
+    public Map<AbilityTriggerReason, Collection<BossAbility>> abilitySet() {
         return abilities;
     }
 
@@ -99,10 +100,10 @@ public class InvinciblePhase implements Phase {
 
     @Override
     public void onFinish() {
-        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(this.getClass().getSimpleName() + " has finished"));
         LivingEntity entity = boss.getEnemy().getEntity();
         invincibleCircles.forEach(BukkitRunnable::cancel);
         entity.setInvulnerable(false);
+        entity.setAI(true);
         if (prev != null) entity.teleport(prev);
     }
 }

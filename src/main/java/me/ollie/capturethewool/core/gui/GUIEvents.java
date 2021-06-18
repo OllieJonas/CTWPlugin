@@ -1,5 +1,6 @@
 package me.ollie.capturethewool.core.gui;
 
+import me.ollie.capturethewool.core.gui.helper.ChestGUIUtils;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,8 +22,7 @@ public class GUIEvents implements Listener {
     public void onInteract(InventoryClickEvent event) {
 
         HumanEntity entity = event.getWhoClicked();
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             GUI gui = manager.getGuiFor(player);
 
             if (gui == null)
@@ -39,7 +39,7 @@ public class GUIEvents implements Listener {
             if (event.getInventory().getType() != InventoryType.CHEST) // weird thing in paper where it considers your hotbar n stuff as well
                 return;
 
-            item.action().accept(player, event.getCurrentItem());
+            item.action().accept(player, gui.isHasBorder() ? ChestGUIUtils.shiftFromBorderPosition(slot) : slot, event.getCurrentItem());
 
             if (item.itemClosesMenu())
                 manager.closeGuiFor(player);
@@ -53,8 +53,7 @@ public class GUIEvents implements Listener {
 
         HumanEntity entity = event.getPlayer();
 
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
 
             manager.closeGuiFor(player);
         }

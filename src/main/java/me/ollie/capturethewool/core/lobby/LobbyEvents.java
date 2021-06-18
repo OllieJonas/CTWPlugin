@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -35,9 +36,7 @@ public class LobbyEvents implements Listener {
     @EventHandler
     public void onVoidDamage(EntityDamageEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Player)) return;
-
-        Player player = (Player) entity;
+        if (!(entity instanceof Player player)) return;
 
         if (!lobbyManager.isInLobby(player)) return;
 
@@ -48,6 +47,15 @@ public class LobbyEvents implements Listener {
         if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
             player.teleport(lobby.getSpawnPoint()); // prevent people from just yeeting off the edge
         }
+    }
+
+    @EventHandler
+    public void onHunger(FoodLevelChangeEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        if (!lobbyManager.isInLobby(player)) return;
+
+        event.setCancelled(true);
     }
 
     // ----------- DOUBLE JUMP --------------- //

@@ -30,6 +30,10 @@ public enum Colour {
         this.chatColour = chatColour;
     }
 
+    public String getTeamName(Boss<?> boss) {
+        return getTeamName(boss.getEnemy().getDisplayName());
+    }
+
     public String getTeamName(String bossName) {
         return Arrays.stream(ChatColor.stripColor(HealthDisplay.removeHealth(bossName)).split(" "))
                 .map(s -> s.charAt(0))

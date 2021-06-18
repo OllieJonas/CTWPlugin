@@ -28,6 +28,9 @@ public class Lobby {
 
     private final AbstractGame game;
 
+    // fix this i cba rn
+    private int maxPlayers = 24;
+
     private final AbstractGameMap map;
 
     private final Consumer<Player> onLeaveAction; // in case of potential expansion to multiple servers
@@ -51,7 +54,11 @@ public class Lobby {
     public Lobby(JavaPlugin plugin, AbstractGame game, AbstractGameMap map, Consumer<Player> onLeaveAction, boolean requiresForceStart) {
         this(plugin, game, map, GAMES_LOBBY_LOCATION, onLeaveAction, requiresForceStart);
     }
-    
+
+    public Lobby(JavaPlugin plugin, AbstractGame game, AbstractGameMap map, Location lobbyLocation, boolean requireForceStart) {
+        this(plugin, game, map, lobbyLocation, __ -> {}, requireForceStart);
+    }
+
     public Lobby(JavaPlugin plugin, AbstractGame game, AbstractGameMap map, Location lobbyLocation, Consumer<Player> onLeaveAction, boolean requireForceStart) {
         this.plugin = plugin;
         this.game = game;
@@ -72,20 +79,25 @@ public class Lobby {
     }
 
     public void addPlayer(Player player) {
-        players.add(player);
-        // hidePlayers(player);
 
-        player.teleport(spawnPoint);
+        if (players.size() + 1 >= game.getConfiguration().maxPlayers()) {
+            player.sendMessage(ChatColor.RED + "Game is full! :(");
+        } else {
+            players.add(player);
+            // hidePlayers(player);
 
-        countdown.addPlayer(player);
+            player.teleport(spawnPoint);
 
-        waitingForPlayers.showTo(player);
+            countdown.addPlayer(player);
 
-        LobbyItems.addItems(player, game.isKitGame());
-        sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has joined! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().maxPlayers() + ChatColor.GRAY + ")");
+            waitingForPlayers.showTo(player);
 
-        if (!requireForceStart && players.size() >= game.getConfiguration().minPlayersToStart())
-            beginStartingGame();
+            LobbyItems.addItems(player, game.isKitGame(), game.isTeamGame());
+            sendMessageToAll(ChatColor.AQUA + player.getName() + ChatColor.GRAY + " has joined! (" + ChatColor.AQUA + players.size() + ChatColor.GRAY + " / " + ChatColor.AQUA + game.getConfiguration().maxPlayers() + ChatColor.GRAY + ")");
+
+            if (!requireForceStart && players.size() >= game.getConfiguration().minPlayersToStart())
+                gameStarting();
+        }
     }
 
     public void removePlayer(Player player) {
@@ -104,17 +116,13 @@ public class Lobby {
         onLeaveAction.accept(player);
     }
 
-    public void beginStartingGame() {
-        game.load(map);
-        gameStarting();
-    }
-
     public void gameStarting() {
         this.state = State.STARTING;
         this.countdown = new Countdown(plugin, "Teleporting to map in ", this.players, 15, this::startGame).setDisplaySubtitle(false).start();
     }
 
     public void startGame() {
+        game.load(map);
         this.state = State.IN_GAME;
         game.startGame(players);
     }

@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.game.key;
 
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.util.control.Pair;
 import me.ollie.capturethewool.core.util.region.Region;
 import me.ollie.capturethewool.core.util.region.RegionUtil;
@@ -71,8 +71,8 @@ public class DungeonDoor {
         region.getBlocks().forEach(b -> b.setType(Material.AIR));
         Vector down = new Vector(0, -1, 0).multiply(0.1);
 
-        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(CaptureTheWool.getInstance(), () -> fallingBlocks.forEach(fb -> fb.setVelocity(down)), 0L, 1L);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheWool.getInstance(), () -> {
+        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> fallingBlocks.forEach(fb -> fb.setVelocity(down)), 0L, 1L);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             Bukkit.getScheduler().cancelTask(taskId);
             fallingBlocks.forEach(Entity::remove);
             floorMaterials.forEach((k, v) -> k.getWorld().getBlockAt(k).setType(v));

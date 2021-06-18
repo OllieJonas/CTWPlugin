@@ -1,33 +1,28 @@
 package me.ollie.capturethewool.commands;
 
 import me.ollie.capturethewool.commands.subcommands.*;
-import me.ollie.capturethewool.core.command.RootCommand;
+import me.ollie.capturethewool.core.command.ICommand;
+import me.ollie.capturethewool.core.command.annotations.CommandAliases;
+import me.ollie.capturethewool.core.command.annotations.CommandInfo;
+import me.ollie.capturethewool.core.command.annotations.RootCommand;
+import org.bukkit.entity.Player;
 
-public class CaptureTheWoolCommand extends RootCommand {
+import java.util.List;
+
+@RootCommand("ctw")
+@CommandAliases("capturethewool")
+@CommandInfo(
+        usage = "/ctw",
+        shortDescription = "Main command for Capture the Wool"
+)
+public class CaptureTheWoolCommand implements ICommand {
 
     public CaptureTheWoolCommand() {
-        super("capturethewool", "ctw");
+
     }
 
     @Override
-    public void addSubCommands() {
-        addSubCommand(new YanSucksCommand());
-        addSubCommand(new ProgressBarCommand());
-        addSubCommand(new PowerfulItemCommand());
-        addSubCommand(new ExoticCiphersCommand());
-        addSubCommand(new ExoticShopCommand());
-        addSubCommand(new ZombieCommand());
-        addSubCommand(new SpawnerCommand());
-        addSubCommand(new ImageCommand());
-        addSubCommand(new EmojiCommand());
-        addSubCommand(new GCFreeCommand());
-        addSubCommand(new FakeCollectCommand());
-        addSubCommand(new AbilityCommand());
-        addSubCommand(new VectorCircleCommand());
-        addSubCommand(new BossCommand());
-        addSubCommand(new KeyCommand());
-        addSubCommand(new ExplosionCommand());
-        addSubCommand(new CannonCommand());
-        addSubCommand(new EntityRiseGroundCommand());
+    public void execute(Player player, List<String> args) {
+
     }
 }

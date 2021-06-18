@@ -12,7 +12,7 @@ public interface Phase {
 
     void onStart();
 
-    Map<AbilityTriggerReason, BossAbility> abilitySet();
+    Map<AbilityTriggerReason, Collection<BossAbility>> abilitySet();
 
     EndCondition endCondition();
 

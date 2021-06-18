@@ -1,7 +1,7 @@
 package me.ollie.capturethewool.items.items;
 
 import lombok.Builder;
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.util.particles.ActionOnEnterVortex;
 import me.ollie.capturethewool.core.util.particles.Circle;
 import org.bukkit.Bukkit;
@@ -47,7 +47,7 @@ public class Well {
     }
 
     public void run() {
-        ActionOnEnterVortex vortex = new ActionOnEnterVortex(CaptureTheWool.getInstance(),
+        ActionOnEnterVortex vortex = new ActionOnEnterVortex(Main.getInstance(),
                 vortexParticle,
                 location.clone().subtract(0, 1, 0),
                 5,
@@ -64,15 +64,15 @@ public class Well {
         if (circleRainbow)
             fanningOutCircle.setRainbow(true);
 
-        fanningOutCircle.runTask(CaptureTheWool.getInstance());
+        fanningOutCircle.runTask(Main.getInstance());
 
         Circle persistentCircle = new Circle(circleParticle, location, radius, radius);
         if (circleRainbow)
             persistentCircle.setRainbow(true);
 
-        persistentCircle.runTaskTimer(CaptureTheWool.getInstance(), 0L, 10L);
+        persistentCircle.runTaskTimer(Main.getInstance(), 0L, 10L);
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheWool.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             vortex.destroy();
             fanningOutCircle.cancel();
             persistentCircle.cancel();

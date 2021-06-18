@@ -34,7 +34,7 @@ public class Shop extends GUI {
         commoditiesList.forEach(c -> commodities.put(ItemStackUtil.stripLore(c.getItem().clone()), c));
 
         AtomicInteger count = new AtomicInteger(0);
-        commodities.forEach((i, c) -> add(count.getAndIncrement(), new GUIItem(c.buildIcon(player), (pl, item) -> {
+        commodities.forEach((i, c) -> add(count.getAndIncrement(), GUIItem.of(c.buildIcon(player), (pl, item) -> {
             Commodity commodity = commodities.get(ItemStackUtil.stripLore(item));
 
             if (commodity == null) {

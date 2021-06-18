@@ -112,6 +112,11 @@
             <version>0.9.14</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
 
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>

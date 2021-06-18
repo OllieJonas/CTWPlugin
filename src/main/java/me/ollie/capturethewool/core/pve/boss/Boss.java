@@ -7,24 +7,20 @@ import me.ollie.capturethewool.core.pve.Enemy;
 import me.ollie.capturethewool.core.pve.animation.SpawnAnimation;
 import me.ollie.capturethewool.core.pve.boss.events.BossDamageByPlayerEvent;
 import me.ollie.capturethewool.core.pve.boss.events.BossDeathEvent;
-import me.ollie.capturethewool.core.pve.boss.events.BossEventsAdapter;
-import me.ollie.capturethewool.core.pve.boss.events.BossMinionDeathEvent;
-import me.ollie.capturethewool.core.pve.boss.phase.EndCondition;
 import me.ollie.capturethewool.core.pve.boss.phase.Phase;
-import me.ollie.capturethewool.core.util.HealthDisplay;
+import me.ollie.capturethewool.core.util.CollectionUtil;
 import me.ollie.capturethewool.enemy.DropsRegistry;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.util.*;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 @Getter
@@ -42,10 +38,18 @@ public abstract class Boss<T extends LivingEntity>  {
 
     protected Phase currPhase;
 
+    private final Task task;
+
     public Boss(Enemy<T> enemy, Colour colour) {
+        this(enemy, colour, 0L, 20L);
+    }
+
+    public Boss(Enemy<T> enemy, Colour colour, long delayTask, long repeatTaskTimer) {
         this.enemy = enemy;
         this.colour = colour;
         this.phases = phases().get();
+        this.task = new Task();
+        task.runTaskTimer(GamesCore.getInstance().getPlugin(), delayTask, repeatTaskTimer);
     }
 
     public T spawn(Location location) {
@@ -76,18 +80,55 @@ public abstract class Boss<T extends LivingEntity>  {
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("curr: " + currPhase.getClass().getSimpleName()));
 
         Phase next = phases.next();
-        next.onStart();
-        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("next: " + next.getClass().getSimpleName()));
 
-        currPhase = next;
+        if (next != null) {
+            next.onStart();
+            Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("next: " + next.getClass().getSimpleName()));
+
+            currPhase = next;
+        }
     }
 
     private void setGlowing(T entity, Colour colour) {
+        Team prevTeam = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(colour.getTeamName(this));
+        if (prevTeam != null) prevTeam.unregister();
+
         entity.setGlowing(true);
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
         Team team = board.registerNewTeam(colour.getTeamName(entity.getCustomName()));
         team.setColor(colour.getChatColour());
         team.addEntry(entity.getUniqueId().toString());
+    }
+
+    public Collection<? extends Player> getSurroundingPlayers() {
+        return enemy.getEntity().getLocation().getNearbyPlayers(64);
+    }
+
+    private void callAbility(AbilityTriggerReason reason) {
+
+        CollectionUtil.random(currPhase.abilitySet().get(reason), BossAbility::isUsable)
+                .ifPresent(a -> a.call(getSurroundingPlayers(), this));
+    }
+
+    private class Task extends BukkitRunnable {
+
+        @Override
+        public void run() {
+            callAbility(AbilityTriggerReason.RANDOM_DURATION);
+        }
+    }
+
+    private class Listener implements org.bukkit.event.Listener {
+
+        @EventHandler
+        public void onHurt(BossDamageByPlayerEvent event) {
+            event.getBoss().callAbility(AbilityTriggerReason.HIT);
+        }
+
+        @EventHandler
+        public void onDeath(BossDeathEvent event) {
+            task.cancel();
+        }
     }
 
 //    protected void setInvincible(T entity, Location teleport) {

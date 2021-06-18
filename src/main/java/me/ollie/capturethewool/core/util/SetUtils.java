@@ -3,6 +3,8 @@ package me.ollie.capturethewool.core.util;
 import lombok.experimental.UtilityClass;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class SetUtils {
@@ -19,5 +21,9 @@ public class SetUtils {
 
         original.removeAll(toRemove);
         return original;
+    }
+
+    public <E> Set<E> union(Set<E> set1, Set<E> set2) {
+        return Stream.concat(set1.stream(), set2.stream()).collect(Collectors.toUnmodifiableSet());
     }
 }

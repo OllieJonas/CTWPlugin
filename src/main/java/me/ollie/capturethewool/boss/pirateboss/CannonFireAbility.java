@@ -1,6 +1,6 @@
 package me.ollie.capturethewool.boss.pirateboss;
 
-import me.ollie.capturethewool.CaptureTheWool;
+import me.ollie.capturethewool.Main;
 import me.ollie.capturethewool.core.ability.Ability;
 import me.ollie.capturethewool.core.ability.Damage;
 import me.ollie.capturethewool.core.explosion.Explosion;
@@ -60,11 +60,11 @@ public class CannonFireAbility extends Ability {
         long time = Math.round(distance / speed);
         Vector trajectory = VectorUtil.trajectory(from.toVector(), to.toVector());
 
-        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(CaptureTheWool.getInstance(), () -> {
+        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
             primed.setVelocity(trajectory.multiply(speed));
             primed.getLocation().getWorld().spawnParticle(Particle.SMOKE_NORMAL, primed.getLocation(), 5, 1, 1, 1, 0);
         }, 0L, 1L);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(CaptureTheWool.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getInstance(), () -> {
             Bukkit.getScheduler().cancelTask(taskId);
             Explosion explosion = new Explosion(to, 2);
             explosion.explode();

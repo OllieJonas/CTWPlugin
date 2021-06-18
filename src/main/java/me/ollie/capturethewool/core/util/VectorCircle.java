@@ -1,12 +1,10 @@
 package me.ollie.capturethewool.core.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.objectweb.asm.tree.LocalVariableAnnotationNode;
 
 import java.util.function.Consumer;
 

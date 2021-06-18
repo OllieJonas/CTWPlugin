@@ -52,17 +52,19 @@ public abstract class GUI {
     public abstract void addItems();
 
     public GUIItem exitButton() {
-        GUIItem item = new GUIItem(new ItemStackBuilder(Material.BARRIER).withName(ChatColor.RED + "Exit Menu").withLore(ChatColor.GRAY + "Click to exit the menu").build(), ((player1, itemStack) -> {}), true);
+        GUIItem item = GUIItem.of(new ItemStackBuilder(Material.BARRIER).withName(ChatColor.RED + "Exit Menu").withLore(ChatColor.GRAY + "Click to exit the menu").build(), ((player1, itemStack) -> {}), true);
         add(size - 1, item);
         return item;
     }
 
     public void init() {
-        addItems();
-        items.entrySet().forEach((e -> inventory.setItem(e.getKey(), e.getValue().item())));
+        if (items == null || items.isEmpty()) {
+            addItems();
+            items.entrySet().forEach((e -> inventory.setItem(e.getKey(), e.getValue().item())));
 
-        if (hasBorder)
-            ChestGUIUtils.calculateFiller(size).forEach(i -> inventory.setItem(i, BORDER_ITEM));
+            if (hasBorder)
+                ChestGUIUtils.calculateFiller(size).forEach(i -> inventory.setItem(i, BORDER_ITEM));
+        }
     }
 
     public void add(int index, GUIItem item) {
@@ -70,12 +72,12 @@ public abstract class GUI {
         items.put(index, item);
     }
 
-    public void open(Player player) {
+    protected void open(Player player) {
         player.closeInventory();
         player.openInventory(inventory);
     }
 
-    public void close(Player player) {
+    protected void close(Player player) {
         player.closeInventory();
     }
 
@@ -83,6 +85,7 @@ public abstract class GUI {
         return items.get(slot);
     }
 
+    // this is very inefficient but i cba to work out a decent option for this
     public void redraw() {
         clear();
         addItems();

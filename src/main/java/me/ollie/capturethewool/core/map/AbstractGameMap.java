@@ -12,4 +12,9 @@ public abstract class AbstractGameMap {
 
     protected final World world;
 
+    public AbstractGameMap(World world) {
+        this.name = world.getName();
+        this.world = world;
+    }
+
 }
