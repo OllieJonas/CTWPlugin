@@ -2,7 +2,7 @@ package me.ollie.capturethewool.core;
 
 import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
-import me.ollie.capturethewool.core.command.internal.CommandManager;
+import me.ollie.capturethewool.core.command.meta.internal.CommandManager;
 import me.ollie.capturethewool.core.cooldown.CooldownManager;
 import me.ollie.capturethewool.core.gui.GUIEvents;
 import me.ollie.capturethewool.core.gui.GUIManager;
@@ -18,6 +18,7 @@ import me.ollie.capturethewool.core.world.ConstantTime;
 import me.ollie.capturethewool.core.world.ConstantWeather;
 import me.ollie.capturethewool.core.util.HealthDisplay;
 import me.ollie.capturethewool.core.util.HolographicDamageListener;
+import me.ollie.capturethewool.core.world.WorldUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,9 +44,7 @@ public class GamesCore {
 
     private SpecialArrowListener specialArrowListener;
 
-    private final ConstantTime constantTime;
-
-    private final ConstantWeather constantWeather;
+    private final WorldUtilities worldUtilities;
 
     public GamesCore(JavaPlugin plugin, ProtocolManager manager) {
         this.plugin = plugin;
@@ -53,6 +52,8 @@ public class GamesCore {
         this.lobbyManager = new LobbyManager(plugin);
         this.commandManager = new CommandManager(plugin);
         commandManager.init();
+
+        this.worldUtilities = new WorldUtilities(plugin);
 
         this.timerTask = new TimerTask();
         this.timerTaskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(this.getPlugin(), timerTask, 0L, 2L);
@@ -64,21 +65,17 @@ public class GamesCore {
         new BossManager(plugin);
         new HealthDisplay(plugin);
 
-        this.constantTime = new ConstantTime(plugin);
-        this.constantWeather = new ConstantWeather(plugin);
-
         registerEvents();
 
         instance = this;
     }
 
     public void init() {
-        constantTime.start();
-        constantWeather.start();
+        worldUtilities.init();
     }
 
     public void onDisable() {
-        constantTime.cancel();
+        worldUtilities.cancel();
     }
 
     private void registerEvents() {

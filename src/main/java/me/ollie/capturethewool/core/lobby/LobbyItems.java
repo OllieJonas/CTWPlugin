@@ -19,6 +19,11 @@ public class LobbyItems implements Listener {
             .withLore(ChatColor.GRAY + "Right click me to vote for a map! :)")
             .build();
 
+    private static final ItemStack SELECT_TEAM_ITEM = new ItemStackBuilder(Material.RED_WOOL)
+            .withName(ChatColor.AQUA + "Select a Team (Right Click)")
+            .withLore(ChatColor.GRAY + "Right click me to select your team!")
+            .build();
+
     private static final ItemStack SELECT_KIT_ITEM = new ItemStackBuilder(Material.BOW)
             .withName(ChatColor.AQUA + "Select a Kit (Right Click)")
             .withLore(ChatColor.GRAY + "Right click me to select a kit!")
@@ -40,12 +45,16 @@ public class LobbyItems implements Listener {
         if (selectKit)
             player.getInventory().setItem(4, SELECT_KIT_ITEM);
 
+        if (teamGame)
+            player.getInventory().setItem(5, SELECT_TEAM_ITEM);
+
         player.getInventory().setItem(8, LEAVE_ITEM);
     }
 
     public static void resetItems(Player player) {
         player.getInventory().clear(0);
         player.getInventory().clear(4);
+        player.getInventory().clear(5);
         player.getInventory().clear(8);
     }
 

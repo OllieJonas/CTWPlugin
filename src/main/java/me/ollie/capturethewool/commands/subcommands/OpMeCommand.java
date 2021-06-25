@@ -1,11 +1,11 @@
 package me.ollie.capturethewool.commands.subcommands;
 
 import me.ollie.capturethewool.commands.CaptureTheWoolCommand;
-import me.ollie.capturethewool.core.command.ISubCommand;
-import me.ollie.capturethewool.core.command.annotations.SubCommand;
+import me.ollie.capturethewool.core.command.meta.ISubCommand;
+import me.ollie.capturethewool.core.command.meta.annotations.SubCommand;
 import me.ollie.capturethewool.core.command.common.HelpCommand;
 import me.ollie.capturethewool.core.command.common.UsageCommand;
-import me.ollie.capturethewool.core.command.internal.context.SubCommandContext;
+import me.ollie.capturethewool.core.command.meta.internal.context.SubCommandContext;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

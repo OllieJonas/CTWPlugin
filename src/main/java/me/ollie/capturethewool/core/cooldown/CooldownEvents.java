@@ -41,11 +41,7 @@ public class CooldownEvents implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
-
-        if (!(damager instanceof Player)) return;
-
-        Player player = (Player) damager;
+        if (!(event.getDamager() instanceof Player player)) return;
 
         event.setCancelled(cooldown(player, CooldownType.HIT, player.getInventory().getItemInMainHand()));
     }
@@ -54,10 +50,7 @@ public class CooldownEvents implements Listener {
     public void onShoot(EntityShootBowEvent event) {
         Entity shooter = event.getEntity();
 
-        if (!(shooter instanceof Player)) return;
-
-
-        Player player = (Player) shooter;
+        if (!(shooter instanceof Player player)) return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
 
@@ -83,9 +76,7 @@ public class CooldownEvents implements Listener {
 
     private <T extends Cancellable> void onBowHit(Projectile projectile, T event) {
 
-        if (!(projectile.getShooter() instanceof Player)) return;
-
-        Player player = (Player) projectile.getShooter();
+        if (!(projectile.getShooter() instanceof Player player)) return;
 
         if (!projectile.hasMetadata("name")) return;
 
@@ -97,18 +88,16 @@ public class CooldownEvents implements Listener {
 
         if (item.cooldownType() != CooldownType.BOW_HIT) return;
 
-        event.setCancelled(cooldown(player, CooldownType.BOW_HIT, item.getItemStack()));
+        event.setCancelled(cooldown(player, CooldownType.BOW_HIT, item.getItem().item()));
     }
 
     @EventHandler
     public void onThrow(ProjectileLaunchEvent event) {
         ProjectileSource source = event.getEntity().getShooter();
 
-        if (!(source instanceof Player)) return;
+        if (!(source instanceof Player player)) return;
 
         if (event.getEntity() instanceof Arrow) return;
-
-        Player player = (Player) source;
 
         event.setCancelled(cooldown(player, CooldownType.THROW_PROJECTILE, player.getInventory().getItemInMainHand()));
     }

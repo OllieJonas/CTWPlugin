@@ -7,55 +7,37 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.function.Function;
 
 public class ConstantWeather implements Listener {
 
     private final JavaPlugin plugin;
 
-    private final Map<World, Function<World, World>> weather;
+    private final Collection<World> weather;
 
     public ConstantWeather(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.weather = new HashMap<>();
+        this.weather = new HashSet<>();
     }
 
     public void start() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public ConstantWeather set(World world, WeatherType type) {
-        weather.put(world, action(type));
+    public ConstantWeather add(World world) {
+        weather.add(world);
         return this;
     }
 
-    public ConstantWeather setAll(WeatherType type) {
-        plugin.getServer().getWorlds().forEach(w -> set(w, type));
+    public ConstantWeather addAll() {
+        plugin.getServer().getWorlds().forEach(this::add);
         return this;
     }
 
     @EventHandler
     public void weatherChange(WeatherChangeEvent event) {
-        weather.computeIfPresent(event.getWorld(), (__, f) -> f);
+        if (weather.contains(event.getWorld())) event.setCancelled(event.toWeatherState());
     }
-
-    private static Function<World, World> action(WeatherType type) {
-        return switch (type) {
-            case CLEAR -> world -> {
-                world.setStorm(false);
-                world.setClearWeatherDuration(Integer.MAX_VALUE);
-                return world;
-            };
-
-            case DOWNFALL -> world -> {
-                world.setStorm(true);
-                world.setWeatherDuration(Integer.MAX_VALUE);
-                return world;
-            };
-        };
-    }
-
-
 }

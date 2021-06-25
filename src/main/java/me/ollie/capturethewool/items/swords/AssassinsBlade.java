@@ -72,20 +72,17 @@ public class AssassinsBlade extends PowerfulSword implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageByEntityEvent event) {
         Entity entity = event.getDamager();
-        if (!(entity instanceof Player)) return;
+        if (!(entity instanceof Player player)) return;
 
-        Player player = (Player) entity;
         Entity target = event.getEntity();
 
-        if (!(target instanceof LivingEntity)) return;
-
-        LivingEntity livingTarget = (LivingEntity) target;
+        if (!(target instanceof LivingEntity livingTarget)) return;
 
         if (!currentlyUsing.contains(player)) return;
 
         currentlyUsing.remove(player);
 
-        if (ChatColor.stripColor(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()).equals(getName())) {
+        if (ChatColor.stripColor(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName()).equals(getItem().name())) {
             livingTarget.setHealth(Math.max(livingTarget.getHealth() - 12, 0));
         }
 

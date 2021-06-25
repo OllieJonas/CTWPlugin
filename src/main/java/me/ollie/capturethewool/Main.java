@@ -9,7 +9,13 @@ import me.ollie.capturethewool.core.hologram.PaginatedHologramBuilder;
 import me.ollie.capturethewool.core.hologram.meta.HologramBuilder;
 import me.ollie.capturethewool.core.npc.InteractableVillager;
 import me.ollie.capturethewool.core.pve.DisableSpawners;
+import me.ollie.capturethewool.core.util.region.Region;
 import me.ollie.capturethewool.core.world.ConstantTime;
+import me.ollie.capturethewool.dungeon.puzzles.maze.Maze;
+import me.ollie.capturethewool.dungeon.puzzles.maze.generator.BacktrackingMazeGenerationStrategy;
+import me.ollie.capturethewool.dungeon.puzzles.maze.generator.HuntAndKillMazeGenerationStrategy;
+import me.ollie.capturethewool.dungeon.puzzles.maze.render.MazeRenderingStrategy;
+import me.ollie.capturethewool.dungeon.puzzles.maze.render.SimpleMazeRenderingStrategy;
 import me.ollie.capturethewool.game.CaptureTheWool;
 import me.ollie.capturethewool.game.key.KeyListener;
 import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
@@ -43,17 +49,23 @@ public class Main extends JavaPlugin {
 
         this.gamesCore.getHolographicDamageListener().toggle();
         gamesCore.setSpecialProjectileRegistry(new CTWProjectileRegistry().getRegistry());
-
-        gamesCore.getConstantTime().set(Bukkit.getWorld("world"), ConstantTime.Time.MIDDAY);
-        gamesCore.getConstantTime().set(Bukkit.getWorld("Capture_the_Wool"), ConstantTime.Time.NIGHT);
-        gamesCore.getConstantWeather().setAll(WeatherType.CLEAR);
+        
+        World world = Bukkit.getWorld("world");
+        
+        gamesCore.getWorldUtilities().getConstantTime().set(world, ConstantTime.Time.MIDDAY);
+        gamesCore.getWorldUtilities().getConstantTime().set(Bukkit.getWorld("Capture_the_Wool"), ConstantTime.Time.NIGHT);
+        gamesCore.getWorldUtilities().getConstantWeather().addAll();
+        gamesCore.getWorldUtilities().getConstantHunger().add("world");
+        gamesCore.getWorldUtilities().getNoDamage().add("world");
+        gamesCore.getWorldUtilities().getNoBlockInteraction().add("world");
+        gamesCore.getWorldUtilities().getNoMobSpawning().add("world", "Capture_the_Wool");
 
         gamesCore.init();
 
         // information hologram loc
-        Location informationHologramLoc = new Location(Bukkit.getWorld("world"), 488.5, 7.5, 72.5);
-        Location informationHologramPrevButtonLoc = new Location(Bukkit.getWorld("world"), 488, 5.25, 71);
-        Location informationHologramNextButtonLoc = new Location(Bukkit.getWorld("world"), 488, 5.25, 74);
+        Location informationHologramLoc = new Location(world, 488.5, 7.5, 72.5);
+        Location informationHologramPrevButtonLoc = new Location(world, 488, 5.25, 71);
+        Location informationHologramNextButtonLoc = new Location(world, 488, 5.25, 74);
 
         PaginatedHologram paginatedHologram = new PaginatedHologramBuilder(this)
                 .title(ChatColor.AQUA + "" + ChatColor.BOLD + "Bee Movie Script")
@@ -72,8 +84,8 @@ public class Main extends JavaPlugin {
 
         paginatedHologram.init();
 
-        Location leftVillagerLoc = new Location(Bukkit.getWorld("world"), 479.5, 4, 60.5);
-        Location rightVillagerLoc = new Location(Bukkit.getWorld("world"), 467.5, 4, 60.5);
+        Location leftVillagerLoc = new Location(world, 479.5, 4, 60.5);
+        Location rightVillagerLoc = new Location(world, 467.5, 4, 60.5);
 
         new JoinLobbyVillager(this, gamesCore.getLobbyManager(), CaptureTheWool.class, leftVillagerLoc);
         new JoinLobbyVillager(this, gamesCore.getLobbyManager(), CaptureTheWool.class, rightVillagerLoc);
@@ -83,6 +95,17 @@ public class Main extends JavaPlugin {
         gamesCore.getLobbyManager().createLobby(new CaptureTheWool(), new CaptureTheWoolMap(WorldConstants.WORLD), lobbySpawnLocation);
 
         registerEvents();
+        
+        Location mazeBottomLeft = new Location(world, 425.5, 3, 73.5);
+        Location mazeTopRight = new Location(world, 410.5, 3, 58.5);
+
+        Region mazeRegion = new Region(mazeTopRight, mazeBottomLeft);
+
+        System.out.println("generate maze time");
+
+        Maze maze = new HuntAndKillMazeGenerationStrategy().generate(mazeRegion);
+        MazeRenderingStrategy mazeRenderer = new SimpleMazeRenderingStrategy();
+        mazeRenderer.render(maze, null);
 
         instance = this;
     }

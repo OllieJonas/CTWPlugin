@@ -1,25 +1,38 @@
 package me.ollie.capturethewool.core.util.region;
 
+import lombok.Getter;
 import org.assertj.core.api.Assertions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple6;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Region {
 
     private Location first;
 
     private Location second;
 
+    private int xSize;
+
+    private int ySize;
+
+    private int zSize;
+
     public Region(Location first, Location second) {
         this.first = first;
         this.second = second;
+
+        updateSizes();
+
+        System.out.println("x: " + xSize + "y: " + ySize + "z: " + zSize);
     }
 
     public static Region expand(Location location, float xzRadius, float yHeight) {
@@ -184,19 +197,63 @@ public class Region {
         return (target < i && target > j) || (target > i && target < j);
     }
 
-    public Location getFirst() {
-        return this.first;
+    public Tuple2<Location, Location> getLocations() {
+        return new Tuple2<>(first, second);
+    }
+
+    public World getWorld() {
+        return first.getWorld();
+    }
+
+    public double getMinX() {
+        return Math.min(first.getX(), second.getX());
+    }
+
+    public double getMinY() {
+        return Math.min(first.getY(), second.getY());
+    }
+
+    public double getMinZ() {
+        return Math.min(first.getZ(), second.getZ());
+    }
+
+    public double getMaxX() {
+        return Math.max(first.getX(), second.getX());
+    }
+
+    public double getMaxY() {
+        return Math.max(first.getY(), second.getY());
+    }
+
+    public double getMaxZ() {
+        return Math.max(first.getZ(), second.getZ());
     }
 
     public void setFirst(Location first) {
         this.first = first;
-    }
-
-    public Location getSecond() {
-        return this.second;
+        updateSizes();
     }
 
     public void setSecond(Location second) {
         this.second = second;
+        updateSizes();
+    }
+
+    public void updateSizes() {
+        updateXSize();
+        updateYSize();
+        updateZSize();
+    }
+
+    private void updateXSize() {
+        this.xSize = (int) Math.abs(first.getX() - second.getX());
+    }
+
+    private void updateYSize() {
+        this.ySize = (int) Math.abs(first.getY() - second.getY());
+    }
+
+    private void updateZSize() {
+        this.zSize = (int) Math.abs(first.getZ() - second.getZ());
     }
 }

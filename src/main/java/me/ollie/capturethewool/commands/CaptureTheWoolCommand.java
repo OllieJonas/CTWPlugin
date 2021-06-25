@@ -1,10 +1,10 @@
 package me.ollie.capturethewool.commands;
 
-import me.ollie.capturethewool.core.command.IRootCommand;
-import me.ollie.capturethewool.core.command.annotations.CommandAliases;
-import me.ollie.capturethewool.core.command.annotations.CommandInfo;
-import me.ollie.capturethewool.core.command.annotations.RootCommand;
-import me.ollie.capturethewool.core.command.internal.context.RootCommandContext;
+import me.ollie.capturethewool.core.command.meta.IRootCommand;
+import me.ollie.capturethewool.core.command.meta.annotations.CommandAliases;
+import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
+import me.ollie.capturethewool.core.command.meta.annotations.RootCommand;
+import me.ollie.capturethewool.core.command.meta.internal.context.RootCommandContext;
 import org.bukkit.entity.Player;
 
 @RootCommand("ctw")

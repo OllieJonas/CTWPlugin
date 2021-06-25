@@ -19,6 +19,6 @@ public class ExoticCommodityRegistry {
     static {
         commodities = new ArrayList<>();
         commodities.addAll(PowerfulItemRegistry.getItemsFor(ItemRarity.EXOTIC).stream().sorted().map(i ->
-                Commodity.of(i.getItemStack(), new Price(Price.Item.of(CurrencyRegistry.EXOTIC_CURRENCY, 1)))).collect(Collectors.toList()));
+                Commodity.of(i.getItem().item(), new Price(Price.Item.of(CurrencyRegistry.EXOTIC_CURRENCY, 1)))).collect(Collectors.toList()));
     }
 }

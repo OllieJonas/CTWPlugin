@@ -85,11 +85,17 @@ public abstract class GUI {
         return items.get(slot);
     }
 
-    // this is very inefficient but i cba to work out a decent option for this
     public void redraw() {
+        redraw(null);
+    }
+
+    // this is very inefficient but i cba to work out a decent option for this
+    public void redraw(Player player) {
         clear();
-        addItems();
         init();
+
+        if (player != null)
+            open(player);
     }
 
     public void clear() {

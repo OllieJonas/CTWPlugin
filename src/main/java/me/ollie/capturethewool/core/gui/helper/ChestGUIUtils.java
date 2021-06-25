@@ -85,7 +85,7 @@ public class ChestGUIUtils {
      * @return The appropriate size of inventory
      */
     public int calculateInventorySize(int slotsRequired) {
-        return Math.min(54, (3 + (slotsRequired / 7)) * 9);
+        return Math.min(54, (3 + (slotsRequired / 8)) * 9);
     }
 
     public int calculateInventorySizeWithSpace(int slotsRequired) {

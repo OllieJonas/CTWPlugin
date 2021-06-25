@@ -1,14 +1,17 @@
 package me.ollie.capturethewool.core.command.common;
 
-import me.ollie.capturethewool.core.command.AllCommands;
-import me.ollie.capturethewool.core.command.ISubCommand;
-import me.ollie.capturethewool.core.command.annotations.CommandInfo;
-import me.ollie.capturethewool.core.command.annotations.SubCommand;
-import me.ollie.capturethewool.core.command.internal.CommandUtils;
-import me.ollie.capturethewool.core.command.internal.InternalSubCommand;
-import me.ollie.capturethewool.core.command.internal.context.SubCommandContext;
+import me.ollie.capturethewool.core.command.meta.AllCommands;
+import me.ollie.capturethewool.core.command.meta.ISubCommand;
+import me.ollie.capturethewool.core.command.meta.annotations.CommandAliases;
+import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
+import me.ollie.capturethewool.core.command.meta.annotations.SubCommand;
+import me.ollie.capturethewool.core.command.meta.internal.CommandUtils;
+import me.ollie.capturethewool.core.command.meta.internal.InternalRootCommand;
+import me.ollie.capturethewool.core.command.meta.internal.InternalSubCommand;
+import me.ollie.capturethewool.core.command.meta.internal.context.SubCommandContext;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SubCommand(name = "usage", root = AllCommands.class)
+@CommandAliases({"information", "info"})
 @CommandInfo(
         usage = "<command>",
         shortDescription = "Get more information on how to use a command",
@@ -32,6 +36,10 @@ public class UsageCommand implements ISubCommand {
 
     private static final String BORDER = "-";
 
+    private static final String TICK = ChatColor.GREEN + "" + ChatColor.BOLD + "✓";
+
+    private static final String CROSS = ChatColor.RED + "" + ChatColor.BOLD + "✖";
+
     private static final ChatColor BORDER_COLOUR = ChatColor.DARK_GRAY;
 
     private static final ChatColor USAGE_COLOUR = ChatColor.AQUA;
@@ -39,7 +47,14 @@ public class UsageCommand implements ISubCommand {
     @Override
     public void execute(Player player, SubCommandContext context) {
         List<String> args = context.args();
-        if (args.size() != 1) {
+
+        if (args.size() == 0) {
+            player.sendMessage(buildHeader(context.parent().getName()));
+            buildUsageMessage(context.parent().getName(), context.parent()).forEach(player::sendMessage);
+            return;
+        }
+
+        if (args.size() > 1) {
             badUsage(player);
             return;
         }
@@ -66,14 +81,27 @@ public class UsageCommand implements ISubCommand {
     }
 
     private List<String> buildUsageMessage(String root, InternalSubCommand command) {
+        return getStrings(root, command.getName(), command.getAliases(), command.getPermission(), command.isRequiresOp(), command.getUsageMessage(), command.getDescription(), command.getLongDescription(), true);
+    }
+
+    private List<String> buildUsageMessage(String root, InternalRootCommand command) {
+        return getStrings(root, command.getName(), command.getAliases(), command.getPermission() == null ? "" : command.getPermission(), command.isRequiresOp(), command.getUsageMessage(), command.getDescription(), command.getLongDescription(), false);
+    }
+
+    @NotNull
+    private List<String> getStrings(String root, String name, List<String> aliases, String permission, boolean requiresOp, String usageMessage, String description, String longDescription, boolean isSub) {
         List<String> list = new ArrayList<>();
-        list.add(ChatColor.DARK_AQUA + "Name: " + ChatColor.AQUA + command.getName());
-        list.add(ChatColor.DARK_AQUA + "Aliases: " + ChatColor.AQUA + String.join(", ", command.getAliases()));
-        list.add(ChatColor.DARK_AQUA + "Permission: " + ChatColor.AQUA + (command.getPermission().equals("") ? "N/A" : command.getPermission()));
-        list.add(ChatColor.DARK_AQUA + "Usage: " + ChatColor.AQUA + "/" + root + " " + command.getName() + " " + command.getUsageMessage());
-        list.add(ChatColor.DARK_AQUA + "Short Description: " + ChatColor.AQUA + command.getDescription());
+        list.add(ChatColor.DARK_AQUA + "Name: " + ChatColor.AQUA + name);
+        list.add(ChatColor.DARK_AQUA + "Aliases: " + ChatColor.AQUA + String.join(", ", aliases));
+        list.add(ChatColor.DARK_AQUA + "Permission: " + ChatColor.AQUA + (permission.equals("") ? "N/A" : permission));
+        list.add(ChatColor.DARK_AQUA + "Requires OP: " + (requiresOp ? TICK : CROSS));
+
+        if (isSub)
+            list.add(ChatColor.DARK_AQUA + "Usage: " + ChatColor.AQUA + "/" + root + " " + name + " " + usageMessage);
+
+        list.add(ChatColor.DARK_AQUA + "Short Description: " + ChatColor.AQUA + description);
         list.add(ChatColor.DARK_AQUA + "Long Description: ");
-        Arrays.stream(command.getLongDescription().split("\n")).map(l -> ChatColor.AQUA + l).forEach(list::add);
+        Arrays.stream(longDescription.split("\n")).map(l -> ChatColor.AQUA + l).forEach(list::add);
         return list;
     }
 

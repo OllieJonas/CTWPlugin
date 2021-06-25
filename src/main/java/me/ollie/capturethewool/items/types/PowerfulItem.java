@@ -18,26 +18,19 @@ import java.util.Map;
 @Getter
 public abstract class PowerfulItem implements Comparable<PowerfulItem> {
 
-    private final String name;
-
-    private final ItemRarity rarity;
-
-    private final ItemStack itemStack;
+    private final RarityItem item;
 
     private final AbilityInformation abilityInformation;
 
     private final ItemCooldownContext context;
 
     public PowerfulItem(String name, String backstory, Material material, ItemRarity rarity, AbilityInformation information) {
-        this.name = name;
-        this.rarity = rarity;
+        this.item = new RarityItem(name, rarity, ItemsUtil.buildPowerfulItemFrom(name, material, backstory, rarity,
+                information.title(),
+                information.description(),
+                information.cooldownDuration(), enchantments()));
         this.abilityInformation = information;
         this.context = new ItemCooldownContext(name, information.cooldownDuration(), cooldownType(), true);
-
-        this.itemStack = ItemsUtil.buildFrom(name, material, backstory, rarity,
-                abilityInformation.title(),
-                abilityInformation.description(),
-                abilityInformation.cooldownDuration(), enchantments());
     }
 
     public Map<Enchantment, Integer> enchantments() {
@@ -54,8 +47,20 @@ public abstract class PowerfulItem implements Comparable<PowerfulItem> {
 
     @Override
     public int compareTo(@NotNull PowerfulItem o) {
-        int rarityCmp = rarity.compareTo(o.getRarity());
+        int rarityCmp = item.rarity().compareTo(o.getItem().rarity());
         if (rarityCmp != 0) return rarityCmp;
-        return name.compareTo(o.getName());
+        return item.name().compareTo(o.getItem().name());
+    }
+
+    public String getName() {
+        return item.name();
+    }
+
+    public ItemRarity getRarity() {
+        return item.rarity();
+    }
+
+    public ItemStack getItemStack() {
+        return item.item();
     }
 }

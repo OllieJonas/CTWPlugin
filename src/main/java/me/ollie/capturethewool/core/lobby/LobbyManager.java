@@ -93,6 +93,9 @@ public class LobbyManager {
 
     public Lobby getLobbyFor(Player player) {
         LobbyInfo info = getLobbyInfoFor(player);
+
+        if (info == null) return null;
+        
         return lobbies.get(info.game()).get(info.lobby());
     }
 

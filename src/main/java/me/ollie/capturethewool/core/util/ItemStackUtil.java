@@ -36,7 +36,10 @@ public class ItemStackUtil {
     }
 
     public String getName(Material material) {
-        return ChatColor.GRAY + WordUtils.capitalizeFully(material.toString().replace("_", " "));
+        return getName(material, ChatColor.GRAY);
+    }
+    public String getName(Material material, ChatColor colour) {
+        return colour + WordUtils.capitalizeFully(material.toString().replace("_", " "));
     }
 
     public String getNameAndAmount(ItemStack item) {

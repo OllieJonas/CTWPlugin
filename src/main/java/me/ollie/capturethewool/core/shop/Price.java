@@ -1,6 +1,5 @@
 package me.ollie.capturethewool.core.shop;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.ollie.capturethewool.core.util.ItemStackUtil;
 import org.bukkit.ChatColor;
@@ -12,11 +11,18 @@ import java.util.stream.Collectors;
 
 public class Price {
 
-    private static final String TICK = "✓";
-    private static final String CROSS = "✖";
+    private static final String TICK = ChatColor.GREEN + "✓";
+
+    private static final String CROSS = ChatColor.RED + "✖";
 
     @Getter
     private final LinkedHashMap<Currency, Integer> currencyAmounts;
+
+    public record Item(Currency currency, int amount) {
+        public static Item of(Currency currency, int amount) {
+            return new Item(currency, amount);
+        }
+    }
 
     public Price(LinkedHashMap<Currency, Integer> currencyAmounts) {
         this.currencyAmounts = currencyAmounts;
@@ -24,7 +30,7 @@ public class Price {
 
     public Price(Item... amounts) {
         this.currencyAmounts = new LinkedHashMap<>();
-        Arrays.stream(amounts).distinct().forEach(i -> currencyAmounts.put(i.getCurrency(), i.getAmount()));
+        Arrays.stream(amounts).distinct().forEach(i -> currencyAmounts.put(i.currency(), i.amount()));
     }
 
     public boolean hasRequirements(Player player) {
@@ -41,14 +47,6 @@ public class Price {
         player.getInventory().removeItem(itemsToRemove);
         player.updateInventory();
         return true;
-    }
-
-    @AllArgsConstructor(staticName = "of")
-    @Getter
-    public static class Item {
-        private final Currency currency;
-
-        private final int amount;
     }
 
     public List<String> itemLore(Player player) {
@@ -92,7 +90,7 @@ public class Price {
         public String getLore() {
             boolean hasEnough = hasEnough();
             return ChatColor.DARK_GRAY + "" + (hasEnough ? ChatColor.GREEN : ChatColor.RED) + "" + amountHave + ChatColor.DARK_GRAY + "/" +
-                    ChatColor.GRAY + amountRequired + ChatColor.DARK_GRAY + "  " + (hasEnough ? ChatColor.GREEN + TICK : ChatColor.RED + CROSS);
+                    ChatColor.GRAY + amountRequired + ChatColor.DARK_GRAY + " " + (hasEnough ? TICK : CROSS);
         }
     }
 }

@@ -70,7 +70,7 @@ public abstract class Enemy<T extends LivingEntity> {
     }
 
     public T spawn(Location location) {
-        return spawn(location, CreatureSpawnEvent.SpawnReason.NATURAL, null);
+        return spawn(location, CreatureSpawnEvent.SpawnReason.CUSTOM, null);
     }
 
     public T spawn(Location location, SpawnAnimation animation) {

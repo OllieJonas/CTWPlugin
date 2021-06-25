@@ -7,6 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,7 +42,7 @@ public class InteractableVillager {
     }
 
     private Villager buildVillager(Location location, Villager.Profession profession) {
-        Villager villager = location.getWorld().spawn(location, Villager.class);
+        Villager villager = location.getWorld().spawn(location, Villager.class, CreatureSpawnEvent.SpawnReason.CUSTOM);
         villager.setAI(false);
         villager.setAdult();
         villager.setProfession(profession);

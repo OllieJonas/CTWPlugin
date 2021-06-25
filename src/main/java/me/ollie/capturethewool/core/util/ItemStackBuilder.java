@@ -9,9 +9,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
 
-import javax.swing.plaf.ColorUIResource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -248,6 +249,50 @@ public class ItemStackBuilder {
             return skull;
         }
     }
+
+    public static class PotionBuilder {
+
+        private final Material material;
+
+        private final ItemStackBuilder builder;
+
+        private final Collection<PotionEffect> potionEffects;
+
+        private Color colour = Color.PURPLE;
+
+        public PotionBuilder(Material material, ItemStackBuilder builder) {
+            this.material = material;
+            this.builder = builder;
+            this.potionEffects = new HashSet<>();
+        }
+
+        public PotionBuilder colour(Color colour) {
+            this.colour = colour;
+            return this;
+        }
+
+        public PotionBuilder potionEffect(PotionEffect effect) {
+            potionEffects.add(effect);
+            return this;
+        }
+
+        public PotionBuilder potionEffects(Collection<PotionEffect> potionEffects) {
+            this.potionEffects.addAll(potionEffects);
+            return this;
+        }
+
+        public ItemStack buildPotion() {
+            ItemStack potion = builder.asMaterial(material).build();
+            PotionMeta meta = (PotionMeta) potion.getItemMeta();
+
+            meta.setColor(colour);
+
+
+            potionEffects.forEach(p -> meta.addCustomEffect(p, true));
+            return potion;
+        }
+    }
+
 
     public static class LeatherArmourBuilder {
 
