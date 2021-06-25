@@ -1,5 +1,6 @@
 package me.ollie.capturethewool.core.command.game;
 
+import me.ollie.capturethewool.core.command.meta.CommandStatus;
 import me.ollie.capturethewool.core.command.meta.IRootCommand;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
 import me.ollie.capturethewool.core.command.meta.annotations.RootCommand;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 public class GameCommand implements IRootCommand {
 
     @Override
-    public void execute(Player player, RootCommandContext context) {
-
+    public CommandStatus execute(Player player, RootCommandContext context) {
+        return CommandStatus.NO_USAGE;
     }
 }

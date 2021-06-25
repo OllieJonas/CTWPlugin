@@ -5,5 +5,5 @@ import me.ollie.capturethewool.core.command.meta.internal.context.RootCommandCon
 import org.bukkit.entity.Player;
 
 public interface IRootCommand extends ICommand {
-    void execute(Player player, RootCommandContext context);
+    CommandStatus execute(Player player, RootCommandContext context);
 }

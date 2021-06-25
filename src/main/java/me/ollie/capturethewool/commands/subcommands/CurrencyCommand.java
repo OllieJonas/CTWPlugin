@@ -28,6 +28,8 @@ public class CurrencyCommand implements ISubCommand {
             return;
         }
 
-        CurrencyRegistry.Factory.getCurrency(args.get(0)).ifPresentOrElse(c -> player.getInventory().addItem(c.itemRepresentation().asQuantity(4)), () -> player.sendMessage(ChatColor.RED + "Currency doesn't exist!"));
+        CurrencyRegistry.Factory.getCurrency(args.get(0)).ifPresentOrElse(
+                c -> player.getInventory().addItem(c.itemRepresentation().asQuantity(4)),
+                () -> player.sendMessage(ChatColor.RED + "Currency doesn't exist!"));
     }
 }

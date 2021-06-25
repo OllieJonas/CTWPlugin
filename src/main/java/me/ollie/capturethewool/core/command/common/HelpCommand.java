@@ -1,10 +1,12 @@
 package me.ollie.capturethewool.core.command.common;
 
 import me.ollie.capturethewool.core.command.meta.AllCommands;
+import me.ollie.capturethewool.core.command.meta.IRootCommand;
 import me.ollie.capturethewool.core.command.meta.ISubCommand;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
 import me.ollie.capturethewool.core.command.meta.annotations.SubCommand;
 import me.ollie.capturethewool.core.command.meta.internal.CommandUtils;
+import me.ollie.capturethewool.core.command.meta.internal.InternalRootCommand;
 import me.ollie.capturethewool.core.command.meta.internal.InternalSubCommand;
 import me.ollie.capturethewool.core.command.meta.internal.context.SubCommandContext;
 import org.bukkit.ChatColor;
@@ -56,9 +58,14 @@ public class HelpCommand implements ISubCommand {
     public void execute(Player player, SubCommandContext context) {
         List<String> args = context.args();
 
+        sendHelp(player, context.parent(), context.rootCommandAlias(), args);
+        // player.sendMessage(buildFooter());
+    }
+
+    public static void sendHelp(Player player, InternalRootCommand rootCommand, String rootCommandAlias, List<String> args) {
         Set<String> alreadyFoundCommands = new HashSet<>(); // internal
 
-        List<Map.Entry<String, InternalSubCommand>> validCommands = context.parent().getSubCommands().entrySet().stream()
+        List<Map.Entry<String, InternalSubCommand>> validCommands = rootCommand.getSubCommands().entrySet().stream()
                 .filter(e -> !alreadyFoundCommands.contains(e.getValue().getName())) // remove duplicates
                 .filter(e -> !e.getValue().isHideFromHelp()) // remove those hidden from help
                 .peek(e -> alreadyFoundCommands.add(e.getValue().getName())) // add to duplicate set
@@ -69,20 +76,19 @@ public class HelpCommand implements ISubCommand {
         int size = validCommands.size();
         int maxPages = size / PAGE_SIZE + (size >= PAGE_SIZE ? 0 : 1);
 
-        int page = args.size() == 0 ? 1 : getPageFrom(args.get(0), player, maxPages);
-        if (page == -1) return;
+        int pageNumber = args.size() == 0 ? 1 : getPageFrom(args.get(0), player, maxPages);
+        if (pageNumber == -1) return;
 
-        int from = Math.min(size - 1, (page - 1) * PAGE_SIZE);
+        int from = Math.min(size - 1, (pageNumber - 1) * PAGE_SIZE);
         int to = Math.min(size - 1, from + PAGE_SIZE);
 
-        List<Map.Entry<String, InternalSubCommand>> window = validCommands.subList(from, to);
+        List<Map.Entry<String, InternalSubCommand>> page = validCommands.subList(from, to);
 
-        player.sendMessage(buildHeader(context.rootCommandAlias(), page, maxPages));
-        window.forEach(e -> player.sendMessage((e.getValue().isRequiresOp() ? ChatColor.RED : ChatColor.DARK_AQUA) + "/" + e.getValue().getName() + ChatColor.DARK_GRAY + " - " + ChatColor.AQUA + e.getValue().getDescription()));
-        // player.sendMessage(buildFooter());
+        player.sendMessage(buildHeader(rootCommandAlias, pageNumber, maxPages));
+        page.forEach(e -> player.sendMessage((e.getValue().isRequiresOp() ? ChatColor.RED : ChatColor.DARK_AQUA) + "/" + e.getValue().getName() + ChatColor.DARK_GRAY + " - " + ChatColor.AQUA + e.getValue().getDescription()));
     }
 
-    private int getPageFrom(String s, Player player, int maxPages) {
+    private static int getPageFrom(String s, Player player, int maxPages) {
         try {
             return Math.min(Integer.parseInt(s), maxPages);
         } catch (NumberFormatException ignored) {
@@ -91,7 +97,7 @@ public class HelpCommand implements ISubCommand {
         }
     }
 
-    private String buildHeader(String commandName, int page, int maxPages) {
+    private static String buildHeader(String commandName, int page, int maxPages) {
         String border = BORDER_COLOUR + BORDER.repeat(10);
         return border + HELP_COLOUR + " /" + commandName + " help (" + page + " / " + maxPages + ") " + border;
     }

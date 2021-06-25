@@ -1,6 +1,8 @@
 package me.ollie.capturethewool.commands.subcommands;
 
 import me.ollie.capturethewool.commands.CaptureTheWoolCommand;
+import me.ollie.capturethewool.core.command.common.HelpCommand;
+import me.ollie.capturethewool.core.command.common.UsageCommand;
 import me.ollie.capturethewool.core.command.meta.ISubCommand;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandAliases;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
@@ -16,6 +18,8 @@ import org.bukkit.entity.Player;
         shortDescription = "Testing hello world command!",
         longDescription = "This is a test for the reflection method of using commands - this is just internal for developers."
 )
+@HelpCommand.Exclude
+@UsageCommand.Exclude
 public class HelloWorldCommand implements ISubCommand {
 
     @Override

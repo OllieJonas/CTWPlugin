@@ -2,6 +2,7 @@ package me.ollie.capturethewool.core.command.meta.internal;
 
 import lombok.Builder;
 import lombok.Getter;
+import me.ollie.capturethewool.core.command.meta.CommandStatus;
 import me.ollie.capturethewool.core.command.meta.IRootCommand;
 import me.ollie.capturethewool.core.command.meta.internal.context.RootCommandContext;
 import me.ollie.capturethewool.core.command.meta.internal.context.SubCommandContext;
@@ -56,7 +57,8 @@ public class InternalRootCommand extends Command {
         if (!CommandUtils.hasPermission(sender, permission, requiresOp)) return noPermission(sender);
 
         if (args.length == 0) { // if args is 0, then execute no args
-            command.execute(player, new RootCommandContext(commandLabel, new ArrayList<>()));
+            CommandStatus status = command.execute(player, new RootCommandContext(commandLabel, new ArrayList<>()));
+
             return true;
         }
 

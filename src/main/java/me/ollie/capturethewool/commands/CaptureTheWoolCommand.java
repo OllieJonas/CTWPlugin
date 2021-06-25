@@ -1,5 +1,6 @@
 package me.ollie.capturethewool.commands;
 
+import me.ollie.capturethewool.core.command.meta.CommandStatus;
 import me.ollie.capturethewool.core.command.meta.IRootCommand;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandAliases;
 import me.ollie.capturethewool.core.command.meta.annotations.CommandInfo;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 public class CaptureTheWoolCommand implements IRootCommand {
 
     @Override
-    public void execute(Player player, RootCommandContext context) {
-
+    public CommandStatus execute(Player player, RootCommandContext context) {
+        return CommandStatus.NO_USAGE;
     }
 }
