@@ -14,16 +14,14 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DungeonDoor {
 
-    private static final Map<DungeonLock, DungeonDoor> DOORS = new HashMap<>();
+    private static final Map<DungeonLock, Collection<DungeonDoor>> DOORS = new HashMap<>();
 
-    public static DungeonDoor getDoorFrom(DungeonLock lock) {
+    public static Collection<DungeonDoor> getDoorFrom(DungeonLock lock) {
         return DOORS.get(lock);
     }
 
@@ -46,7 +44,8 @@ public class DungeonDoor {
 
     public void init() {
         dungeonLock.init();
-        DOORS.put(dungeonLock, this);
+        DOORS.putIfAbsent(dungeonLock, new HashSet<>());
+        DOORS.get(dungeonLock).add(this);
     }
 
     public void unlock(Player player, KeyType key) {

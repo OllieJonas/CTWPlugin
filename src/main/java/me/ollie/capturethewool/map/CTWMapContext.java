@@ -26,7 +26,7 @@ public class CTWMapContext {
 
     private final Collection<Dungeon> ironDungeons;
 
-    private final Collection<Dungeon> goldDungeon;
+    private final Collection<Dungeon> goldDungeons;
 
     private final Collection<Dungeon> diamondDungeons;
 }

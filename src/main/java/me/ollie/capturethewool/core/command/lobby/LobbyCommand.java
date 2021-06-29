@@ -11,6 +11,6 @@ public class LobbyCommand implements IRootCommand {
 
     @Override
     public CommandStatus execute(Player player, RootCommandContext context) {
-        return CommandStatus.NO_USAGE;
+        return CommandStatus.SEND_HELP;
     }
 }

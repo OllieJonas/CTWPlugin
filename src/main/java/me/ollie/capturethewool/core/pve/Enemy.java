@@ -30,7 +30,11 @@ public abstract class Enemy<T extends LivingEntity> {
     private static final Map<Integer, Enemy<?>> idToEnemyMap = new HashMap<>();
 
     public static Enemy<?> get(LivingEntity entity) {
-        return idToEnemyMap.get(entity.getEntityId());
+        return get(entity.getEntityId());
+    }
+
+    public static Enemy<?> get(int id) {
+        return idToEnemyMap.get(id);
     }
 
     protected static final JavaPlugin PLUGIN = GamesCore.getInstance().getPlugin();

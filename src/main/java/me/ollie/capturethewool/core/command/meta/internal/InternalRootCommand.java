@@ -2,6 +2,7 @@ package me.ollie.capturethewool.core.command.meta.internal;
 
 import lombok.Builder;
 import lombok.Getter;
+import me.ollie.capturethewool.core.command.common.HelpCommand;
 import me.ollie.capturethewool.core.command.meta.CommandStatus;
 import me.ollie.capturethewool.core.command.meta.IRootCommand;
 import me.ollie.capturethewool.core.command.meta.internal.context.RootCommandContext;
@@ -56,11 +57,9 @@ public class InternalRootCommand extends Command {
 
         if (!CommandUtils.hasPermission(sender, permission, requiresOp)) return noPermission(sender);
 
-        if (args.length == 0) { // if args is 0, then execute no args
-            CommandStatus status = command.execute(player, new RootCommandContext(commandLabel, new ArrayList<>()));
+        if (args.length == 0) // if args is 0, then execute no args
+            return execute(player, commandLabel, args);
 
-            return true;
-        }
 
         List<String> argsList = Arrays.asList(args);
 
@@ -75,9 +74,15 @@ public class InternalRootCommand extends Command {
             return true;
         }
 
-        command.execute(player, new RootCommandContext(commandLabel, argsList));
+        return execute(player, commandLabel, argsList);
+    }
 
-        return false;
+    private boolean execute(Player player, String label, List<String> args) {
+        CommandStatus status = command.execute(player, new RootCommandContext(label, args));
+        if (status == CommandStatus.SEND_HELP)
+            HelpCommand.sendHelp(player, this, label, args);
+
+        return true;
     }
 
     private boolean noPermission(CommandSender sender) {

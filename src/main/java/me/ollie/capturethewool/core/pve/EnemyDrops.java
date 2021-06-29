@@ -81,13 +81,17 @@ public record EnemyDrops(List<ChanceDrop> drops) {
         }
     }
 
-    public record ChanceDrop(float chance, Drop drop) {}
+    private record ChanceDrop(float chance, Drop drop) {}
 
     sealed interface Drop permits Normal, Special, Unique {
         DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience);
     }
 
     public final record Normal(ItemStack item, int randomAmount) implements Drop {
+
+        public static Normal of(ItemStack item) {
+            return new Normal(item, 1);
+        }
 
         @Override
         public DroppedItemHologram asHologram(Entity entity, Collection<? extends Player> audience) {

@@ -1,6 +1,7 @@
 package me.ollie.capturethewool.core.pve.boss;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.ollie.capturethewool.core.GamesCore;
 import me.ollie.capturethewool.core.bossbar.MobBossBar;
 import me.ollie.capturethewool.core.pve.Enemy;
@@ -40,6 +41,9 @@ public abstract class Boss<T extends LivingEntity>  {
 
     private final Task task;
 
+    @Setter
+    private boolean showBossBar = true;
+
     public Boss(Enemy<T> enemy, Colour colour) {
         this(enemy, colour, 0L, 20L);
     }
@@ -59,7 +63,10 @@ public abstract class Boss<T extends LivingEntity>  {
     public T spawn(Location location, SpawnAnimation animation) {
         enemy.setDrops(DropsRegistry.BOSS_DROPS);
         T entity = enemy.spawn(location, animation);
-        bossBar = new MobBossBar(PLUGIN, entity, colour.getBossBarColour(), location.getNearbyPlayers(32));
+
+        if (showBossBar)
+            bossBar = new MobBossBar(PLUGIN, entity, colour.getBossBarColour(), location.getNearbyPlayers(32));
+
         setGlowing(entity, colour);
         this.currPhase = phases.peek();
         BossManager.getInstance().put(entity, this);
@@ -77,13 +84,11 @@ public abstract class Boss<T extends LivingEntity>  {
 
     public void nextPhase() {
         currPhase.onFinish();
-        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("curr: " + currPhase.getClass().getSimpleName()));
 
         Phase next = phases.next();
 
         if (next != null) {
             next.onStart();
-            Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("next: " + next.getClass().getSimpleName()));
 
             currPhase = next;
         }

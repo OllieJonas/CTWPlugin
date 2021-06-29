@@ -1,6 +1,7 @@
 package me.ollie.capturethewool.core.util.region;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,10 +12,12 @@ import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple6;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
-public class Region {
+public class Region implements Cloneable {
 
     private Location first;
 
@@ -127,6 +130,10 @@ public class Region {
         return locations;
     }
 
+    public List<Block> getBlocks(Material type) {
+        return getBlocks().stream().filter(b -> b.getType() == type).toList();
+    }
+
     public List<Block> getBlocks() {
         List<Block> blocks = new ArrayList<>();
 
@@ -151,7 +158,7 @@ public class Region {
                 }
             }
         }
-        return blocks;
+        return Collections.unmodifiableList(blocks);
     }
 
     private static void fun(World world, List<Location> blocks, int topBlockX, int bottomBlockX, int bottomBlockY, int topBlockZ, int bottomBlockZ, int x, int y, int z) {
@@ -237,6 +244,24 @@ public class Region {
     public void setSecond(Location second) {
         this.second = second;
         updateSizes();
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public Region clone() {
+        return new Region(first.clone(), second.clone());
+    }
+
+
+    public Region shiftX(float amount) {
+        return new Region(first.clone().add(amount, 0, 0), second.clone().add(amount, 0, 0));
+    }
+
+    public Region shiftY(float amount) {
+        return new Region(first.clone().add(0, amount, 0), second.clone().add(0, amount, 0));
+    }
+
+    public Region shiftZ(float amount) {
+        return new Region(first.clone().add(0, 0, amount), second.clone().add(0, 0, amount));
     }
 
     public void updateSizes() {

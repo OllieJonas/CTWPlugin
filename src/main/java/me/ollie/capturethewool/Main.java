@@ -12,17 +12,18 @@ import me.ollie.capturethewool.core.pve.DisableSpawners;
 import me.ollie.capturethewool.core.util.region.Region;
 import me.ollie.capturethewool.core.world.ConstantTime;
 import me.ollie.capturethewool.dungeon.puzzles.maze.Maze;
-import me.ollie.capturethewool.dungeon.puzzles.maze.generator.BacktrackingMazeGenerationStrategy;
 import me.ollie.capturethewool.dungeon.puzzles.maze.generator.HuntAndKillMazeGenerationStrategy;
 import me.ollie.capturethewool.dungeon.puzzles.maze.render.MazeRenderingStrategy;
 import me.ollie.capturethewool.dungeon.puzzles.maze.render.SimpleMazeRenderingStrategy;
+import me.ollie.capturethewool.dungeon.puzzles.push.PushPuzzle;
+import me.ollie.capturethewool.dungeon.puzzles.push.entity.FallingBlockPushEntity;
 import me.ollie.capturethewool.game.CaptureTheWool;
 import me.ollie.capturethewool.game.key.KeyListener;
 import me.ollie.capturethewool.items.meta.PowerfulItemEvents;
 import me.ollie.capturethewool.items.projectile.CTWProjectileRegistry;
 import me.ollie.capturethewool.items.swords.AssassinsBlade;
 import me.ollie.capturethewool.map.CaptureTheWoolMap;
-import me.ollie.capturethewool.map.WorldConstants;
+import me.ollie.capturethewool.map.firstmap.WorldConstants;
 import me.ollie.capturethewool.spawn.JoinLobbyVillager;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,6 +37,8 @@ public class Main extends JavaPlugin {
 
     @Getter
     private GamesCore gamesCore;
+
+    private PushPuzzle pushPuzzle;
 
     @Override
     public void onLoad() {
@@ -107,6 +110,9 @@ public class Main extends JavaPlugin {
         MazeRenderingStrategy mazeRenderer = new SimpleMazeRenderingStrategy();
         mazeRenderer.render(maze, null);
 
+        Region pushPuzzleRegion = new Region(new Location(world, 423, 3, 121), new Location(world, 407, 10, 137));
+        pushPuzzle = new PushPuzzle(this, pushPuzzleRegion, new FallingBlockPushEntity(this, Material.DIAMOND_BLOCK), new PushPuzzle.Configuration(Material.BLACK_CONCRETE, Material.GOLD_BLOCK));
+        pushPuzzle.init();
         instance = this;
     }
 
@@ -122,6 +128,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         gamesCore.onDisable();
+        pushPuzzle.destroy();
         InteractableVillager.destroyAll();
     }
 }

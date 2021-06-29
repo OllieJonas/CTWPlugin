@@ -31,8 +31,7 @@ public class KeyListener implements Listener {
                 Arrays.stream(key.getCanOpen())
                         .map(LockType::getMaterial)
                         .filter(m -> block.getType() == m)
-                        .findAny().ifPresent(p -> DungeonDoor.getDoorFrom(DungeonLock.getLockFrom(location)).unlock(player, key));
-
+                        .findAny().ifPresent(p -> DungeonDoor.getDoorFrom(DungeonLock.getLockFrom(location)).forEach(door -> door.unlock(player, key)));
             }
         }
 }

@@ -16,6 +16,7 @@ public class DropsRegistry {
     private static final DroppedItemHologram.OnPickup EXOTIC_PICKUP_NOTIFICATION = (p, i) -> Bukkit.getOnlinePlayers().forEach(p1 -> p1.sendMessage(ChatColor.AQUA + p.getDisplayName() + " has found " + ItemStackUtil.getName(i) + "!"));
 
     public static final EnemyDrops NONE = EnemyDrops.builder().build();
+
     public static final EnemyDrops BOSS_DROPS = EnemyDrops.builder()
             .drop(1.0F, new EnemyDrops.Unique(
                     CurrencyRegistry.EXOTIC_CURRENCY::itemRepresentation,
@@ -23,6 +24,7 @@ public class DropsRegistry {
                     (audience, $) -> audience.forEach(p -> Bukkit.getOnlinePlayers().forEach(p1 -> p1.sendMessage(ChatColor.AQUA + p.getName() + " has found an Exotic Token!")))))
             .repeatLast(1)
             .build();
+
     public static EnemyDrops POWERFUL_ITEM_DROPS = EnemyDrops.builder()
             .drop(0.02F, EnemyDrops.Special.of(() -> PowerfulItemRegistry.randomItemFrom(ItemRarity.COMMON, ItemRarity.UNCOMMON, ItemRarity.RARE).getItemStack()))
             .drop(0.01F, EnemyDrops.Special.of(() -> PowerfulItemRegistry.randomItemFrom(ItemRarity.LEGENDARY).getItemStack()))
